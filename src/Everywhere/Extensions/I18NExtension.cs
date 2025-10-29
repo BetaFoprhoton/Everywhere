@@ -22,7 +22,7 @@ public static class I18NExtension
         if (attribute is null) return e.ToString();
 
         var isFlags = type.GetCustomAttribute<FlagsAttribute>() is not null;
-        if (!isFlags) return DynamicResourceKey.Resolve(attribute.Key);
+        if (!isFlags) return DynamicResourceKey.Resolve(attribute.HeaderKey);
 
         var values = Enum.GetValues(type).Cast<Enum>();
         if (preferMinimalSet)
@@ -37,12 +37,20 @@ public static class I18NExtension
             foreach (var v in values)
             {
                 var val = Convert.ToInt64(v);
-                if ((target & val) == val)
+
+                // remove result values that are already covered by larger flags
+                for (var i = 0; i < results.Count; i++)
                 {
-                    results.Add(v);
-                    target -= val;
+                    var existingVal = Convert.ToInt64(results[i]);
+                    if ((existingVal & val) == existingVal)
+                    {
+                        results.RemoveAt(i);
+                        i--;
+                    }
                 }
-                if (target == 0) break;
+
+                if ((target & val) == val) results.Add(v);
+                if (target == val) break;
             }
             values = results;
         }
@@ -54,7 +62,7 @@ public static class I18NExtension
         var parts = values.Select(v =>
         {
             var attr = type.GetField(v.ToString())?.GetCustomAttributes<DynamicResourceKeyAttribute>(true).FirstOrDefault();
-            return attr is null ? v.ToString() : DynamicResourceKey.Resolve(attr.Key);
+            return attr is null ? v.ToString() : DynamicResourceKey.Resolve(attr.HeaderKey);
         });
         return string.Join(separator, parts);
     }

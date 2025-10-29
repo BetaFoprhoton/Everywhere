@@ -52,6 +52,11 @@ public partial class ChatWindowViewModel : BusyViewModelBase, IEventSubscriber<C
     [ObservableProperty]
     public partial PixelRect TargetBoundingRect { get; private set; }
 
+    /// <summary>
+    /// Indicates whether the file picker is currently open.
+    /// </summary>
+    public bool IsPickingFiles { get; set; }
+
     [field: AllowNull, MaybeNull]
     public NotifyCollectionChangedSynchronizedViewList<ChatAttachment> ChatAttachments =>
         field ??= _chatAttachments.ToNotifyCollectionChangedSlim(SynchronizationContextCollectionEventDispatcher.Current);
@@ -170,23 +175,34 @@ public partial class ChatWindowViewModel : BusyViewModelBase, IEventSubscriber<C
 
         try
         {
-            if (_chatAttachments.Any(a => a is ChatVisualElementAttachment vea && Equals(vea.Element?.Target, targetElement)))
-            {
-                IsOpened = true;
-                return;
-            }
+            IsOpened = true;
+
+            // Avoid adding duplicate attachments
+            if (_chatAttachments.Any(a => a is ChatVisualElementAttachment vea && Equals(vea.Element?.Target, targetElement))) return;
 
             TargetBoundingRect = default;
-            if (targetElement == null) return;
+            if (targetElement == null)
+            {
+                if (_chatAttachments is [ChatVisualElementAttachment { IsFocusedElement: true }, ..]) _chatAttachments.RemoveAt(0);
+                return;
+            }
 
             var createElement = Settings.ChatWindow.AutomaticallyAddElement;
             var (boundingRect, attachment) = await Task
                 .Run(() => (targetElement.BoundingRectangle, createElement ? CreateFromVisualElement(targetElement) : null), cancellationToken)
                 .WaitAsync(TimeSpan.FromSeconds(1), cancellationToken);
             TargetBoundingRect = boundingRect;
-            _chatAttachments.Clear();
-            if (attachment is not null) _chatAttachments.Add(attachment.With(a => a.IsFocusedElement = true));
-            IsOpened = true;
+            if (attachment is not null)
+            {
+                if (_chatAttachments is [ChatVisualElementAttachment { IsFocusedElement: true }, ..])
+                {
+                    _chatAttachments[0] = attachment.With(a => a.IsFocusedElement = true);
+                }
+                else
+                {
+                    _chatAttachments.Insert(0, attachment.With(a => a.IsFocusedElement = true));
+                }
+            }
         }
         catch (Exception ex)
         {
@@ -279,7 +295,7 @@ public partial class ChatWindowViewModel : BusyViewModelBase, IEventSubscriber<C
         if (_chatAttachments.Count >= Settings.Internal.MaxChatAttachmentCount) return;
 
         IReadOnlyList<IStorageFile> files;
-        IsOpened = false;
+        IsPickingFiles = true;
         try
         {
             files = await StorageProvider.OpenFilePickerAsync(
@@ -288,11 +304,29 @@ public partial class ChatWindowViewModel : BusyViewModelBase, IEventSubscriber<C
                     AllowMultiple = true,
                     FileTypeFilter =
                     [
-                        new FilePickerFileType("Images")
+                        new FilePickerFileType(LocaleKey.ChatWindowViewModel_AddFile_FilePickerFileType_SupportedFiles.I18N())
                         {
-                            Patterns = ["*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp", "*.webp"]
+                            Patterns = MimeTypeUtilities.SupportedMimeTypes.Keys
+                                .AsValueEnumerable()
+                                .Select(x => '*' + x)
+                                .ToList()
                         },
-                        new FilePickerFileType("All Files")
+                        new FilePickerFileType(LocaleKey.ChatWindowViewModel_AddFile_FilePickerFileType_Images.I18N())
+                        {
+                            Patterns = MimeTypeUtilities.GetExtensionsForMimeTypePrefix("image/")
+                                .AsValueEnumerable()
+                                .Select(x => '*' + x)
+                                .ToList()
+                        },
+                        new FilePickerFileType(LocaleKey.ChatWindowViewModel_AddFile_FilePickerFileType_Documents.I18N())
+                        {
+                            Patterns = MimeTypeUtilities.GetExtensionsForMimeTypePrefix("application/")
+                                .AsValueEnumerable()
+                                .Concat(MimeTypeUtilities.GetExtensionsForMimeTypePrefix("text/"))
+                                .Select(x => '*' + x)
+                                .ToList()
+                        },
+                        new FilePickerFileType(LocaleKey.ChatWindowViewModel_AddFile_FilePickerFileType_AllFiles.I18N())
                         {
                             Patterns = ["*"]
                         }
@@ -301,7 +335,7 @@ public partial class ChatWindowViewModel : BusyViewModelBase, IEventSubscriber<C
         }
         finally
         {
-            IsOpened = true;
+            IsPickingFiles = false;
         }
 
         if (files.Count <= 0) return;
@@ -324,19 +358,7 @@ public partial class ChatWindowViewModel : BusyViewModelBase, IEventSubscriber<C
 
         try
         {
-            var attachment = await ChatFileAttachment.CreateAsync(filePath);
-
-            if (!attachment.IsImage)
-            {
-                return; // TODO: 0.3.0
-            }
-
-            if (Settings.Model.SelectedCustomAssistant?.IsImageInputSupported.ActualValue is not true)
-            {
-                return;
-            }
-
-            _chatAttachments.Add(attachment);
+            _chatAttachments.Add(await ChatFileAttachment.CreateAsync(filePath));
         }
         catch (Exception ex)
         {

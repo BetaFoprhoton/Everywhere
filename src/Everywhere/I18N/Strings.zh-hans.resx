@@ -1,4 +1,6 @@
-﻿<root>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simplified Chinese (简体中文) -->
+<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -44,11 +46,11 @@
     <data name="SettingsCategory_ChatWindow_Header" xml:space="preserve">
         <value>聊天窗口设置</value>
     </data>
-    <data name="Settings_ChatWindow_Hotkey_Header" xml:space="preserve">
+    <data name="Settings_ChatWindow_Shortcut_Header" xml:space="preserve">
         <value>快捷键</value>
     </data>
-    <data name="Settings_ChatWindow_Hotkey_Description" xml:space="preserve">
-        <value>设置一个快捷键，在任何时候按下即可唤出聊天悬浮窗。</value>
+    <data name="Settings_ChatWindow_Shortcut_Description" xml:space="preserve">
+        <value>设置一个快捷键，在任何时候按下即可唤出聊天窗口。</value>
     </data>
     <data name="SettingsCategory_Model_Header" xml:space="preserve">
         <value>AI 设置</value>
@@ -179,8 +181,11 @@
     <data name="ChatWindow_Title" xml:space="preserve">
         <value>有什么可以帮忙的？</value>
     </data>
-    <data name="KeyboardHotkeyInputBox_Watermark" xml:space="preserve">
+    <data name="KeyboardShortcutInputBox_Watermark" xml:space="preserve">
         <value>点击设置快捷键</value>
+    </data>
+    <data name="KeyboardShortcutInputBox_SettingWatermark" xml:space="preserve">
+        <value>设置中</value>
     </data>
     <data name="ChatContext_Metadata_Title_Default" xml:space="preserve">
         <value>未命名会话</value>
@@ -642,7 +647,7 @@
         <value>网络浏览器</value>
     </data>
     <data name="NativeChatPlugin_WebBrowser_Description" xml:space="preserve">
-        <value>提供浏览网络的能力，包括搜索引擎和网页访问功能，可减少模型幻觉，并提供最新信息。注意：使用 web_search 工具需要配置搜索引擎 API 密钥（和模型 API 密钥是不同的）。如果你不打算配置 API 密钥，可取消勾选 web_search 工具，仅使用 web_snapshot 工具。</value>
+        <value>提供浏览网络的能力，包括搜索引擎和网页访问功能，可减少模型幻觉，并提供最新信息。注意：使用“网络搜索”工具需要配置搜索引擎 API 密钥（和模型 API 密钥是不同的）。如果你不打算配置 API 密钥，可取消勾选“网络搜索”工具，仅使用“访问网页”工具。</value>
     </data>
     <data name="NativeChatPlugin_Shell_Header" xml:space="preserve">
         <value>终端</value>
@@ -681,7 +686,7 @@
         <value>视觉树</value>
     </data>
     <data name="NativeChatPlugin_VisualTree_Description" xml:space="preserve">
-        <value>提供屏幕内元素的感知能力。</value>
+        <value>提供屏幕内 UI 元素的感知和操作能力。</value>
     </data>
     <data name="ChangeLogView_ViewOnGitHubHyperlinkButton_Content" xml:space="preserve">
         <value>访问 GitHub</value>
@@ -782,10 +787,10 @@
     <data name="WelcomeView_EnterApiKeyStep_Message6" xml:space="preserve">
         <value>🎉 验证成功！让我们进入最后一步吧！</value>
     </data>
-    <data name="WelcomeView_HotkeyStep_Message1" xml:space="preserve">
+    <data name="WelcomeView_ShortcutStep_Message1" xml:space="preserve">
         <value>恭喜！全部完成了。你可以随时按下面的快捷键唤醒我。</value>
     </data>
-    <data name="WelcomeView_HotkeyStep_Message2" xml:space="preserve">
+    <data name="WelcomeView_ShortcutStep_Message2" xml:space="preserve">
         <value>如果没反应，可能是被其他软件占用，可以点击换一个快捷键哦。</value>
     </data>
     <data name="FriendlyExceptionMessage_Authentication" xml:space="preserve">
@@ -1148,10 +1153,10 @@
         <value>拒绝所有</value>
     </data>
     <data name="NativeChatPlugin_FileSystem_DeleteFiles_DeletionConsent_Header" xml:space="preserve">
-        <value>即将删除 {0} 个文件或文件夹。</value>
+        <value>即将删除 {0} 个文件或文件夹</value>
     </data>
     <data name="NativeChatPlugin_FileSystem_DeleteFiles_SystemFile_DeletionConsent_Header" xml:space="preserve">
-        <value>即将删除系统文件或文件夹。</value>
+        <value>即将删除系统文件或文件夹</value>
     </data>
     <data name="TextDifferenceEditor_DiscardButton_Content" xml:space="preserve">
         <value>拒绝</value>
@@ -1216,8 +1221,8 @@
     <data name="NativeChatPlugin_WebBrowser_WebSearch_Header" xml:space="preserve">
         <value>网络搜索</value>
     </data>
-    <data name="ChatPluginDisplayBlockPresenter_FileReferences_TotalCountRun_Text" xml:space="preserve">
-        <value>文件数: </value>
+    <data name="ChatPluginDisplayBlockPresenter_FileReferences_TotalCountTextBlock_Text" xml:space="preserve">
+        <value>{0} 个文件或文件夹</value>
     </data>
     <data name="ChatPluginDisplayBlockPresenter_FileReferences_HasMoreReferencesTextBlock_Text" xml:space="preserve">
         <value>其余略</value>
@@ -1227,5 +1232,38 @@
     </data>
     <data name="NativeChatPlugin_WebBrowser_WebSnapshot_Visiting" xml:space="preserve">
         <value>前往: {0}</value>
+    </data>
+    <data name="ChatPluginDisplayBlockPresenter_Urls_TotalCountTextBlock_Text" xml:space="preserve">
+        <value>{0} 个链接</value>
+    </data>
+    <data name="NativeChatPlugin_PowerShell_ExecuteScript_ScriptConsent_Header" xml:space="preserve">
+        <value>即将执行下列终端脚本</value>
+    </data>
+    <data name="NativeChatPlugin_VisualTree_CaptureVisualElementById_Header" xml:space="preserve">
+        <value>UI 元素截图</value>
+    </data>
+    <data name="NativeChatPlugin_VisualTree_CaptureFullScreen_Header" xml:space="preserve">
+        <value>全屏截图</value>
+    </data>
+    <data name="NativeChatPlugin_VisualTree_ExecuteVisualActionQueue_Header" xml:space="preserve">
+        <value>操作 UI 元素</value>
+    </data>
+    <data name="NativeChatPlugin_Everything_SearchFiles_Header" xml:space="preserve">
+        <value>使用 Everything 搜索文件</value>
+    </data>
+    <data name="NativeChatPlugin_PowerShell_ExecuteScript_Header" xml:space="preserve">
+        <value>执行脚本</value>
+    </data>
+    <data name="ChatWindowViewModel_AddFile_FilePickerFileType_Documents" xml:space="preserve">
+        <value>文档</value>
+    </data>
+    <data name="ChatWindowViewModel_AddFile_FilePickerFileType_AllFiles" xml:space="preserve">
+        <value>所有文件</value>
+    </data>
+    <data name="ChatWindowViewModel_AddFile_FilePickerFileType_Images" xml:space="preserve">
+        <value>图片</value>
+    </data>
+    <data name="ChatWindowViewModel_AddFile_FilePickerFileType_SupportedFiles" xml:space="preserve">
+        <value>支持的文件</value>
     </data>
 </root>

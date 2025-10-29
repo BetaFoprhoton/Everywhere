@@ -82,6 +82,20 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
         ChatInputBox.PastingFromClipboard += HandleChatInputBoxPastingFromClipboard;
     }
 
+    /// <summary>
+    /// Initializes the chat window.
+    /// </summary>
+    public void Initialize()
+    {
+        EnsureInitialized();
+        ApplyStyling();
+        StartRendering();
+        StopRendering();
+        _windowHelper.SetCloaked(this, true);
+        ShowActivated = true;
+        Topmost = true;
+    }
+
     private void HandleKeyDown(object? sender, KeyEventArgs e)
     {
         switch (e.Key)
@@ -116,6 +130,7 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
             var value = change.NewValue is true;
             _settings.Internal.IsChatWindowPinned = value;
             ShowInTaskbar = value;
+            _windowHelper.SetCloaked(this, false); // Uncloak when pinned state changes to ensure visibility
         }
     }
 
@@ -192,7 +207,7 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
     {
         base.OnLostFocus(e);
 
-        if (!IsActive && !IsWindowPinned)
+        if (!ViewModel.IsPickingFiles && !IsActive && !IsWindowPinned && !_windowHelper.AnyModelDialogOpened(this))
         {
             IsOpened = false;
         }
@@ -341,13 +356,14 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
                 }
             }
 
-            WindowState = WindowState.Minimized;
             ShowInTaskbar = IsWindowPinned;
             _windowHelper.SetCloaked(this, false);
+            StartRendering();
             ChatInputBox.Focus();
         }
         else
         {
+            StopRendering();
             ShowInTaskbar = false;
             _windowHelper.SetCloaked(this, true);
         }
@@ -377,13 +393,22 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
     {
         switch (e)
         {
+            case { Key: Key.Escape }:
+            {
+                IsOpened = false;
+                break;
+            }
             case { Key: Key.N, KeyModifiers: KeyModifiers.Control }:
+            {
                 ViewModel.ChatContextManager.CreateNewCommand.Execute(null);
                 break;
+            }
             case { Key: Key.T, KeyModifiers: KeyModifiers.Control } when
                 _settings.Model.SelectedCustomAssistant?.IsFunctionCallingSupported.ActualValue is true:
+            {
                 _settings.Internal.IsToolCallEnabled = !_settings.Internal.IsToolCallEnabled;
                 break;
+            }
         }
 
         base.OnKeyDown(e);

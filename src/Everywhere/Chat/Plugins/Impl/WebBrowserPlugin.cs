@@ -7,6 +7,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Web;
+using Everywhere.Chat.Permissions;
 using Everywhere.Configuration;
 using Everywhere.Interop;
 using Everywhere.Utilities;
@@ -38,10 +39,15 @@ public partial class WebBrowserPlugin : BuiltInChatPlugin
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger<WebBrowserPlugin> _logger;
     private readonly DebounceExecutor<WebBrowserPlugin> _browserDisposer;
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        TypeInfoResolver = GeneratedJsonSerializationContext.Default
+    };
     private readonly SemaphoreSlim _browserLock = new(1, 1);
 
     private IWebSearchEngineConnector? _connector;
+    private int _maxSearchCount;
     private IBrowser? _browser;
     private Process? _browserProcess;
 
@@ -126,21 +132,21 @@ public partial class WebBrowserPlugin : BuiltInChatPlugin
         // Extract only the base URI without query parameters
         uri = new UriBuilder(uri) { Query = string.Empty }.Uri;
 
-        _connector = provider.Id.ToLower() switch
+        (_connector, _maxSearchCount) = provider.Id.ToLower() switch
         {
-            "google" => new GoogleConnector(
+            "google" => (new GoogleConnector(
                 new BaseClientService.Initializer
                 {
                     ApiKey = EnsureApiKey(provider.ApiKey),
                     BaseUri = uri.AbsoluteUri,
                 },
                 provider.SearchEngineId ?? throw new UnauthorizedAccessException("Search Engine ID is not set."),
-                _loggerFactory),
-            "tavily" => new TavilyConnector(EnsureApiKey(provider.ApiKey), uri, _loggerFactory),
-            "brave" => new BraveConnector(EnsureApiKey(provider.ApiKey), new Uri(uri, "?q"), _loggerFactory),
-            "bocha" => new BoChaConnector(EnsureApiKey(provider.ApiKey), uri, _loggerFactory),
-            "jina" => new JinaConnector(EnsureApiKey(provider.ApiKey), new Uri(uri, "?q"), _loggerFactory),
-            "searxng" => new SearxngConnector(uri, _loggerFactory),
+                _loggerFactory) as IWebSearchEngineConnector, 10),
+            "tavily" => (new TavilyConnector(EnsureApiKey(provider.ApiKey), uri, _loggerFactory), 20),
+            "brave" => (new BraveConnector(EnsureApiKey(provider.ApiKey), new Uri(uri, "?q"), _loggerFactory), 20),
+            "bocha" => (new BoChaConnector(EnsureApiKey(provider.ApiKey), uri, _loggerFactory), 50),
+            "jina" => (new JinaConnector(EnsureApiKey(provider.ApiKey), new Uri(uri, "?q"), _loggerFactory), 50),
+            "searxng" => (new SearxngConnector(uri, _loggerFactory), 50),
             _ => throw new NotSupportedException($"Web search engine provider '{provider.Id}' is not supported.")
         };
 
@@ -153,8 +159,7 @@ public partial class WebBrowserPlugin : BuiltInChatPlugin
     /// </summary>
     /// <param name="userInterface"></param>
     /// <param name="query">The text to search for.</param>
-    /// <param name="count">The number of results to return. Default is 1.</param>
-    /// <param name="offset">The number of results to skip. Default is 0.</param>
+    /// <param name="count">The number of results to return. Default is 10.</param>
     /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
     /// <returns>A task that represents the asynchronous operation. The value of the TResult parameter contains the search results as a string.</returns>
     /// <remarks>
@@ -162,16 +167,17 @@ public partial class WebBrowserPlugin : BuiltInChatPlugin
     /// Only use this method if you are aware of the potential risks and have validated the input to prevent security vulnerabilities.
     /// </remarks>
     [KernelFunction("web_search")]
-    [Description("Perform a web search. Invoke this multiple times with different queries to get more results.")]
+    [Description(
+        "Perform a web search and return the results as a json array of web pages. " +
+        "You can use the results to answer user questions with up-to-date information.")] // TODO: index (chat scope)
     [DynamicResourceKey(LocaleKey.NativeChatPlugin_WebBrowser_WebSearch_Header)]
     private async Task<string> WebSearchAsync(
         [FromKernelServices] IChatPluginUserInterface userInterface,
         [Description("Search query")] string query,
         [Description("Number of results")] int count = 10,
-        [Description("Number of results to skip")] int offset = 0,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) // TODO: Offset is not well supported.
     {
-        _logger.LogDebug("Performing web search with query: {Query}, count: {Count}, offset: {Offset}", query, count, offset);
+        _logger.LogDebug("Performing web search with query: {Query}, count: {Count}", query, count);
 
         userInterface.RequestDisplaySink().AppendDynamicResourceKey(
             new FormattedDynamicResourceKey(
@@ -179,14 +185,26 @@ public partial class WebBrowserPlugin : BuiltInChatPlugin
                 new DirectResourceKey(query)));
 
         EnsureConnector();
+        count = Math.Clamp(count, 1, _maxSearchCount);
 
-        var results = await _connector.SearchAsync<WebPage>(query, count, offset, cancellationToken).ConfigureAwait(false);
-        userInterface.RequestDisplaySink().AppendDynamicResourceKey(
-            new FormattedDynamicResourceKey(
-                LocaleKey.NativeChatPlugin_WebBrowser_WebSearch_Searching,
-                new DirectResourceKey(query)));
+        var results = await _connector.SearchAsync<WebPage>(query, count, 0, cancellationToken).ConfigureAwait(false);
+        var indexedResults = results
+            .AsValueEnumerable()
+            .Select((r, i) => new IndexedWebPage(
+                Index: i + 1,
+                Name: r.Name,
+                Url: r.Url,
+                Snippet: r.Snippet))
+            .ToList();
+        userInterface.RequestDisplaySink().AppendUrls(
+            indexedResults.Select(r => new ChatPluginUrl(
+                r.Url,
+                new DirectResourceKey(r.Name))
+            {
+                Index = r.Index
+            }).ToList());
 
-        return JsonSerializer.Serialize(results, _jsonSerializerOptions);
+        return JsonSerializer.Serialize(indexedResults, _jsonSerializerOptions);
     }
 
     private async ValueTask<IBrowser> EnsureBrowserAsync(CancellationToken cancellationToken)
@@ -306,16 +324,12 @@ public partial class WebBrowserPlugin : BuiltInChatPlugin
 
                 var node = await page.Accessibility.SnapshotAsync();
                 var json = JsonSerializer.Serialize(
-                    new
-                    {
+                    new WebSnapshotResult(
                         node.Name,
-                        Elements = node.Children.Select(n => new
-                        {
+                        node.Children.Select(n => new WebSnapshotElement(
                             n.Name,
                             n.Description,
-                            n.Role
-                        })
-                    },
+                            n.Role))),
                     _jsonSerializerOptions);
 
                 return json;
@@ -332,6 +346,28 @@ public partial class WebBrowserPlugin : BuiltInChatPlugin
         }
     }
 
+    private sealed record IndexedWebPage(
+        [property: JsonPropertyName("index")] int Index,
+        [property: JsonPropertyName("name")] string Name,
+        [property: JsonPropertyName("url")] string Url,
+        [property: JsonPropertyName("snippet")] string Snippet
+    );
+
+    private sealed record WebSnapshotResult(
+        [property: JsonPropertyName("name")] string? Name,
+        [property: JsonPropertyName("elements")] IEnumerable<WebSnapshotElement> Elements
+    );
+
+    private sealed record WebSnapshotElement(
+        [property: JsonPropertyName("name")] string? Name,
+        [property: JsonPropertyName("description")] string? Description,
+        [property: JsonPropertyName("role")] string Role
+    );
+
+    [JsonSerializable(typeof(List<IndexedWebPage>))]
+    [JsonSerializable(typeof(WebSnapshotResult))]
+    private partial class GeneratedJsonSerializationContext : JsonSerializerContext;
+
     private class TavilyConnector(string apiKey, Uri? uri, ILoggerFactory? loggerFactory) : IWebSearchEngineConnector
     {
         private readonly TavilyClient _tavilyClient = new(baseUri: uri);
@@ -339,9 +375,9 @@ public partial class WebBrowserPlugin : BuiltInChatPlugin
 
         public async Task<IEnumerable<T>> SearchAsync<T>(string query, int count = 1, int offset = 0, CancellationToken cancellationToken = default)
         {
-            if (count is <= 0 or >= 50)
+            if (count is <= 0 or >= 21)
             {
-                throw new ArgumentOutOfRangeException(nameof(count), count, $"{nameof(count)} value must be greater than 0 and less than 50.");
+                throw new ArgumentOutOfRangeException(nameof(count), count, $"{nameof(count)} value must be greater than 0 and less than 21.");
             }
 
             _logger.LogDebug("Sending request");
@@ -524,9 +560,9 @@ public partial class WebBrowserPlugin : BuiltInChatPlugin
         /// <inheritdoc/>
         public async Task<IEnumerable<T>> SearchAsync<T>(string query, int count = 1, int offset = 0, CancellationToken cancellationToken = default)
         {
-            if (count is <= 0 or >= 50)
+            if (count is <= 0 or >= 51)
             {
-                throw new ArgumentOutOfRangeException(nameof(count), count, $"{nameof(count)} value must be greater than 0 and less than 50.");
+                throw new ArgumentOutOfRangeException(nameof(count), count, $"{nameof(count)} value must be greater than 0 and less than 51.");
             }
 
             _logger.LogDebug("Sending request: {Uri}", _uri);

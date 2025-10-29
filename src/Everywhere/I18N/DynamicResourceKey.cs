@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Reactive;
 using Everywhere.Utilities;
 using MessagePack;
+using ZLinq;
 
 namespace Everywhere.I18N;
 
@@ -117,26 +118,16 @@ public partial class FormattedDynamicResourceKey(object key, params IReadOnlyLis
         var formatter = new AnonymousObserver<object?>(_ => observer.OnNext(ToString()));
         var disposeCollector = new DisposeCollector();
         disposeCollector.Add(GetObservable().Subscribe(formatter));
-        Args.OfType<DynamicResourceKey>().ForEach(arg => disposeCollector.Add(arg.Subscribe(formatter)));
+        Args.ForEach(arg => disposeCollector.Add(arg.Subscribe(formatter)));
         return disposeCollector;
     }
 
     public override string ToString()
     {
         var resolvedKey = Resolve(Key);
-        if (string.IsNullOrEmpty(resolvedKey))
-        {
-            return string.Empty;
-        }
-
-        var resolvedArgs = new object?[Args.Count];
-        for (var i = 0; i < Args.Count; i++)
-        {
-            if (Args[i] is DynamicResourceKey dynamicKey) resolvedArgs[i] = dynamicKey.ToString();
-            else resolvedArgs[i] = Args[i];
-        }
-
-        return string.Format(resolvedKey, resolvedArgs);
+        return string.IsNullOrEmpty(resolvedKey) ?
+            string.Empty :
+            string.Format(resolvedKey, Args.AsValueEnumerable().Select(a => a.ToString()).ToList().AsSpan());
     }
 }
 
@@ -227,7 +218,12 @@ public class JsonDynamicResourceKey : Dictionary<string, string>, IObservable<ob
 }
 
 [AttributeUsage(AttributeTargets.All)]
-public class DynamicResourceKeyAttribute(string key) : Attribute
+public class DynamicResourceKeyAttribute(string headerKey, string? descriptionKey = null) : Attribute
 {
-    public string Key { get; } = key;
+    public string HeaderKey { get; } = headerKey;
+
+    /// <summary>
+    /// The optional description key.
+    /// </summary>
+    public string? DescriptionKey { get; } = descriptionKey;
 }

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Everywhere.Configuration;
+using Everywhere.Chat.Permissions;
 using Lucide.Avalonia;
 using Microsoft.SemanticKernel;
 
@@ -10,6 +10,8 @@ public abstract partial class ChatFunction : ObservableObject
 {
     public virtual DynamicResourceKeyBase HeaderKey => new DirectResourceKey(KernelFunction.Name);
 
+    public virtual DynamicResourceKeyBase DescriptionKey => new DirectResourceKey(KernelFunction.Description);
+
     public LucideIconKind? Icon { get; set; }
 
     /// <summary>
@@ -17,30 +19,10 @@ public abstract partial class ChatFunction : ObservableObject
     /// </summary>
     public virtual ChatFunctionPermissions Permissions => ChatFunctionPermissions.AllAccess;
 
-    /// <summary>
-    /// The permissions currently granted to this function.
-    /// </summary>
-    [ObservableProperty]
-    public partial Customizable<ChatFunctionPermissions> GrantedPermissions { get; set; } = ChatFunctionPermissions.None;
-
     [ObservableProperty]
     public partial bool IsEnabled { get; set; } = true;
 
     public abstract KernelFunction KernelFunction { get; }
-
-    /// <summary>
-    /// Checks if the required permissions are granted for this function.
-    /// </summary>
-    /// <param name="minimumPermission">The minimum permission level to consider as granted.</param>
-    /// <returns></returns>
-    public bool IsPermissionsGranted(ChatFunctionPermissions minimumPermission = ChatFunctionPermissions.FileRead)
-    {
-        var permissions = Permissions;
-        if ((int)permissions <= (int)minimumPermission) return true;
-
-        var grantedPermissions = GrantedPermissions.ActualValue;
-        return (grantedPermissions & permissions) == permissions;
-    }
 
     /// <summary>
     /// Converts the function call content to a user-friendly format for UI display.
@@ -54,17 +36,25 @@ public sealed class NativeChatFunction : ChatFunction
 {
     public override DynamicResourceKeyBase HeaderKey { get; }
 
+    public override DynamicResourceKeyBase DescriptionKey => _descriptionKey ?? base.DescriptionKey;
+
     public override ChatFunctionPermissions Permissions { get; }
 
     public override KernelFunction KernelFunction { get; }
 
+    private readonly DynamicResourceKey? _descriptionKey;
     private readonly IFriendlyFunctionCallContentRenderer? _renderer;
 
     public NativeChatFunction(Delegate method, ChatFunctionPermissions permissions, LucideIconKind? icon = null)
     {
-        if (method.Method.GetCustomAttributes<DynamicResourceKeyAttribute>(false).FirstOrDefault() is { Key: { Length: > 0 } key })
+        if (method.Method.GetCustomAttributes<DynamicResourceKeyAttribute>(false).FirstOrDefault() is
+            { HeaderKey: { Length: > 0 } headerKey } attribute)
         {
-            HeaderKey = new DynamicResourceKey(key);
+            HeaderKey = new DynamicResourceKey(headerKey);
+            if (!attribute.DescriptionKey.IsNullOrWhiteSpace())
+            {
+                _descriptionKey = new DynamicResourceKey(attribute.DescriptionKey);
+            }
         }
         else if (method.Method.GetCustomAttributes<KernelFunctionAttribute>(false).FirstOrDefault() is { Name: { Length: > 0 } name })
         {
@@ -79,7 +69,8 @@ public sealed class NativeChatFunction : ChatFunction
         Permissions = permissions;
         KernelFunction = KernelFunctionFactory.CreateFromMethod(method);
 
-        if (method.Method.GetCustomAttributes<FriendlyFunctionCallContentRendererAttribute>(false).FirstOrDefault() is { RendererType: { } rendererType })
+        if (method.Method.GetCustomAttributes<FriendlyFunctionCallContentRendererAttribute>(false).FirstOrDefault() is
+            { RendererType: { } rendererType })
         {
             if (!typeof(IFriendlyFunctionCallContentRenderer).IsAssignableFrom(rendererType))
             {

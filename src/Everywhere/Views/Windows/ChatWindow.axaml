@@ -3,22 +3,20 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:at="clr-namespace:Everywhere.AttachedProperties"
   xmlns:be="clr-namespace:Everywhere.Behaviors" xmlns:chat="clr-namespace:Everywhere.Chat"
   xmlns:common="clr-namespace:Everywhere.Common" xmlns:interop="clr-namespace:Everywhere.Interop"
-  xmlns:md="clr-namespace:LiveMarkdown.Avalonia;assembly=LiveMarkdown.Avalonia" xmlns:plugins="clr-namespace:Everywhere.Chat.Plugins"
-  xmlns:shadui="clr-namespace:ShadUI.Controls;assembly=ShadUI" xmlns:sys="clr-namespace:System;assembly=System.Runtime"
-  xmlns:themes="clr-namespace:ShadUI.Themes;assembly=ShadUI" xmlns:v="clr-namespace:Everywhere.Views"
-  xmlns:vc="clr-namespace:Everywhere.ValueConverters" xmlns:vm="clr-namespace:Everywhere.ViewModels"
-  MinWidth="400" MinHeight="144.8"
-  x:DataType="vm:ChatWindowViewModel" x:TypeArguments="vm:ChatWindowViewModel"
-  Background="Transparent" ExtendClientAreaChromeHints="NoChrome"
-  ExtendClientAreaToDecorationsHint="True"
+  xmlns:md="clr-namespace:LiveMarkdown.Avalonia;assembly=LiveMarkdown.Avalonia" xmlns:shadui="clr-namespace:ShadUI.Controls;assembly=ShadUI"
+  xmlns:sys="clr-namespace:System;assembly=System.Runtime" xmlns:themes="clr-namespace:ShadUI.Themes;assembly=ShadUI"
+  xmlns:v="clr-namespace:Everywhere.Views" xmlns:vc="clr-namespace:Everywhere.ValueConverters"
+  xmlns:vm="clr-namespace:Everywhere.ViewModels" MinWidth="400"
+  MinHeight="144.8" x:DataType="vm:ChatWindowViewModel"
+  x:TypeArguments="vm:ChatWindowViewModel" Background="Transparent"
+  ExtendClientAreaChromeHints="NoChrome" ExtendClientAreaToDecorationsHint="True"
   IsOpened="{Binding IsOpened, Mode=OneWayToSource}"
   IsTitleBarVisible="False"
   RequestedThemeVariant="{x:Static themes:ThemeVariants.Acrylic}"
-  ShowActivated="True" SizeToContent="WidthAndHeight"
+  ShowActivated="False" SizeToContent="WidthAndHeight"
   SystemDecorations="BorderOnly"
   TargetBoundingRect="{Binding TargetBoundingRect}"
-  Topmost="True" TransparencyLevelHint="AcrylicBlur"
-  WindowStartupLocation="Manual">
+  TransparencyLevelHint="AcrylicBlur" WindowStartupLocation="Manual">
 
   <v:ReactiveShadWindow.Hosts>
     <shadui:DialogHost
@@ -650,17 +648,18 @@
                                 CornerRadius="4"
                                 IsVisible="{Binding !IsImage}"
                                 ToolTip.Tip="{Binding FilePath}">
-                                <StackPanel
-                                  Margin="6,0" Orientation="Horizontal"
-                                  Spacing="4">
+                                <DockPanel
+                                  Margin="6,0" HorizontalSpacing="4"
+                                  LastChildFill="True">
                                   <LucideIcon
-                                    VerticalAlignment="Center"
+                                    DockPanel.Dock="Left" VerticalAlignment="Center"
                                     Kind="{Binding Icon}"
                                     Size="14"/>
                                   <TextBlock
                                     VerticalAlignment="Center" FontSize="12"
-                                    Text="{Binding HeaderKey^}"/>
-                                </StackPanel>
+                                    Text="{Binding HeaderKey^}"
+                                    TextTrimming="{x:Static TextTrimming.PrefixCharacterEllipsis}"/>
+                                </DockPanel>
                               </Border>
                             </Panel>
                           </DataTemplate>
@@ -671,17 +670,18 @@
                               Background="{DynamicResource CardBackgroundColor}"
                               Classes.Invalid="{Binding Element.Target, Converter={x:Static ObjectConverters.IsNull}, FallbackValue=true}"
                               CornerRadius="4">
-                              <StackPanel
-                                Margin="6,0" Orientation="Horizontal"
-                                Spacing="4">
+                              <DockPanel
+                                Margin="6,0" HorizontalSpacing="4"
+                                LastChildFill="True">
                                 <LucideIcon
-                                  VerticalAlignment="Center"
+                                  DockPanel.Dock="Left" VerticalAlignment="Center"
                                   Kind="{Binding Icon}"
                                   Size="14"/>
                                 <TextBlock
                                   VerticalAlignment="Center" FontSize="12"
-                                  Text="{Binding HeaderKey^}"/>
-                              </StackPanel>
+                                  Text="{Binding HeaderKey^}"
+                                  TextTrimming="{x:Static TextTrimming.PrefixCharacterEllipsis}"/>
+                              </DockPanel>
                             </Border>
                           </DataTemplate>
 
@@ -690,17 +690,18 @@
                               Height="24"
                               Background="{DynamicResource CardBackgroundColor}"
                               CornerRadius="4">
-                              <StackPanel
-                                Margin="6,0" Orientation="Horizontal"
-                                Spacing="4">
+                              <DockPanel
+                                Margin="6,0" HorizontalSpacing="4"
+                                LastChildFill="True">
                                 <LucideIcon
-                                  VerticalAlignment="Center"
+                                  DockPanel.Dock="Left" VerticalAlignment="Center"
                                   Kind="{Binding Icon}"
                                   Size="14"/>
                                 <TextBlock
                                   VerticalAlignment="Center" FontSize="12"
-                                  Text="{Binding HeaderKey^}"/>
-                              </StackPanel>
+                                  Text="{Binding HeaderKey^}"
+                                  TextTrimming="{x:Static TextTrimming.PrefixCharacterEllipsis}"/>
+                              </DockPanel>
                             </Border>
                           </DataTemplate>
                         </ItemsControl.DataTemplates>
@@ -735,7 +736,7 @@
                       Icon="{Binding Icon}"
                       IsBusy="{Binding IsBusy}"
                       IsError="{Binding ErrorMessageKey, Converter={x:Static ObjectConverters.IsNotNull}}"
-                      IsExpanded="{Binding IsWaitingForUserInput, Mode=OneWay}">
+                      IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
                       <AdornerLayer.Adorner>
                         <shadui:Badge
                           Width="20" Height="20"
@@ -780,7 +781,11 @@
                       </v:ChatActionBubble.ErrorContent>
 
                       <ItemsControl ItemsSource="{Binding DisplayBlocks}">
-                        <v:ChatPluginDisplayBlockPresenter Content="{Binding}"/>
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <v:ChatPluginDisplayBlockPresenter Content="{Binding}"/>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
                       </ItemsControl>
                     </v:ChatActionBubble>
                   </DataTemplate>
@@ -805,6 +810,7 @@
       Margin="8" HorizontalAlignment="Right"
       VerticalAlignment="Bottom"
       Command="{Binding #ChatMessageScrollViewer.ScrollToEnd}"
+      Focusable="False"
       ToolTip.Tip="{I18N {x:Static LocaleKey.ChatWindow_ScrollToBottom_ToolTip}}">
       <Button.IsVisible>
         <MultiBinding Converter="{x:Static vc:DoubleConverters.MultiSmallerThanAny}">

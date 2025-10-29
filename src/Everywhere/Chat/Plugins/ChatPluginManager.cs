@@ -23,13 +23,13 @@ public class ChatPluginManager : IChatPluginManager
     {
         _builtInPlugins.AddRange(builtInPlugins);
 
-        var isEnabledRecords = settings.Plugin.IsEnabledRecords;
+        var isEnabledRecords = settings.Plugin.IsEnabled;
         foreach (var builtInPlugin in _builtInPlugins)
         {
-            builtInPlugin.IsEnabled = GetIsEnabled($"built-in.{builtInPlugin.Name}", false);
+            builtInPlugin.IsEnabled = GetIsEnabled($"builtin.{builtInPlugin.Name}", false);
             foreach (var function in builtInPlugin.Functions)
             {
-                function.IsEnabled = GetIsEnabled($"built-in.{builtInPlugin.Name}.{function.KernelFunction.Name}", true);
+                function.IsEnabled = GetIsEnabled($"builtin.{builtInPlugin.Name}.{function.KernelFunction.Name}", true);
             }
         }
 
@@ -59,7 +59,7 @@ public class ChatPluginManager : IChatPluginManager
             {
                 case 2:
                 {
-                    settings.Plugin.IsEnabledRecords[$"built-in.{plugin.Name}"] = plugin.IsEnabled;
+                    settings.Plugin.IsEnabled[$"builtin.{plugin.Name}"] = plugin.IsEnabled;
                     break;
                 }
                 case 4 when
@@ -68,7 +68,7 @@ public class ChatPluginManager : IChatPluginManager
                     functionIndex < plugin.Functions.Count:
                 {
                     var function = plugin.Functions[functionIndex];
-                    settings.Plugin.IsEnabledRecords[$"built-in.{plugin.Name}.{function.KernelFunction.Name}"] = function.IsEnabled;
+                    settings.Plugin.IsEnabled[$"builtin.{plugin.Name}.{function.KernelFunction.Name}"] = function.IsEnabled;
                     break;
                 }
             }
@@ -82,13 +82,15 @@ public class ChatPluginManager : IChatPluginManager
 
     public IChatPluginScope CreateScope(ChatContext chatContext, CustomAssistant customAssistant)
     {
+        // Ensure that functions in the scope do not have the same name.
+        var functionNames = new HashSet<string>();
         return new ChatPluginScope(
             _builtInPlugins
                 .AsValueEnumerable()
                 .Cast<ChatPlugin>()
                 .Concat(_mcpPlugins)
                 .Where(p => p.IsEnabled)
-                .Select(p => new ChatPluginSnapshot(p, chatContext, customAssistant))
+                .Select(p => new ChatPluginSnapshot(p, chatContext, customAssistant, functionNames))
                 .ToList());
     }
 
@@ -119,6 +121,7 @@ public class ChatPluginManager : IChatPluginManager
 
     private class ChatPluginSnapshot : ChatPlugin
     {
+        public override string Key => _originalChatPlugin.Key;
         public override DynamicResourceKeyBase HeaderKey => _originalChatPlugin.HeaderKey;
         public override DynamicResourceKeyBase DescriptionKey => _originalChatPlugin.DescriptionKey;
         public override LucideIconKind? Icon => _originalChatPlugin.Icon;
@@ -129,12 +132,31 @@ public class ChatPluginManager : IChatPluginManager
         public ChatPluginSnapshot(
             ChatPlugin originalChatPlugin,
             ChatContext chatContext,
-            CustomAssistant customAssistant
-        ) : base(originalChatPlugin.Name)
+            CustomAssistant customAssistant,
+            HashSet<string> functionNames) : base(originalChatPlugin.Name)
         {
             _originalChatPlugin = originalChatPlugin;
             AllowedPermissions = originalChatPlugin.AllowedPermissions.ActualValue;
-            _functions.AddRange(originalChatPlugin.SnapshotFunctions(chatContext, customAssistant));
+            _functions.AddRange(
+                originalChatPlugin
+                    .SnapshotFunctions(chatContext, customAssistant)
+                    .Select(EnsureUniqueFunctionName));
+
+            ChatFunction EnsureUniqueFunctionName(ChatFunction function)
+            {
+                var metadata = function.KernelFunction.Metadata;
+                if (functionNames.Add(metadata.Name)) return function;
+
+                var postfix = 1;
+                string newName;
+                do
+                {
+                    newName = $"{metadata.Name}_{postfix++}";
+                }
+                while (!functionNames.Add(newName));
+                metadata.Name = newName;
+                return function;
+            }
         }
     }
 }

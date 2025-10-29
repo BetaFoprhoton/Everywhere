@@ -6,29 +6,31 @@ using System.Windows;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.Gdi;
+using Windows.Win32.UI.Input.KeyboardAndMouse;
 using Windows.Win32.UI.WindowsAndMessaging;
 using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using Everywhere.Common;
 using Everywhere.Extensions;
 using Everywhere.I18N;
 using Everywhere.Interop;
+using Everywhere.Windows.Extensions;
 using FlaUI.Core;
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Definitions;
 using FlaUI.Core.Patterns.Infrastructure;
 using FlaUI.UIA3;
 using Microsoft.Extensions.Logging;
-using ZLinq;
-using Application = Avalonia.Application;
 using Bitmap = Avalonia.Media.Imaging.Bitmap;
+using IDataObject = System.Windows.IDataObject;
+using INPUT = Windows.Win32.UI.Input.KeyboardAndMouse.INPUT;
+using KEYBDINPUT = Windows.Win32.UI.Input.KeyboardAndMouse.KEYBDINPUT;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 using Vector = Avalonia.Vector;
-using WindowState = Avalonia.Controls.WindowState;
 
 namespace Everywhere.Windows.Interop;
 
@@ -50,7 +52,6 @@ public partial class Win32VisualElementContext : IVisualElementContext
     {
         _windowHelper = windowHelper;
         _logger = logger;
-
         // Automation.RegisterFocusChangedEvent(element =>
         // {
         //     if (KeyboardFocusedElementChanged is not { } handler) return;
@@ -116,6 +117,9 @@ public partial class Win32VisualElementContext : IVisualElementContext
 
         return null;
     }
+
+    private static bool IsAutomationException(Exception ex) =>
+        ex.GetType().Namespace?.StartsWith("FlaUI.", StringComparison.Ordinal) == true;
 
     private static Bitmap CaptureScreen(PixelRect rect)
     {
@@ -377,6 +381,150 @@ public partial class Win32VisualElementContext : IVisualElementContext
             catch
             {
                 return null;
+            }
+        }
+
+        private void EnsureFocusable()
+        {
+            try
+            {
+                element.Focus();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to focus element before sending shortcut.", ex);
+            }
+        }
+
+        public void Invoke()
+        {
+            try
+            {
+                if (element.Patterns.Invoke.TryGetPattern() is { } invokePattern)
+                {
+                    invokePattern.Invoke();
+                    return;
+                }
+
+                if (element.Patterns.Toggle.TryGetPattern() is { } togglePattern)
+                {
+                    togglePattern.Toggle();
+                    return;
+                }
+
+                if (element.Patterns.SelectionItem.TryGetPattern() is { } selectionItemPattern)
+                {
+                    selectionItemPattern.Select();
+                    return;
+                }
+
+                if (element.Patterns.ExpandCollapse.TryGetPattern() is { } expandCollapsePattern)
+                {
+                    var state = expandCollapsePattern.ExpandCollapseState.ValueOrDefault;
+                    if (state is ExpandCollapseState.Collapsed or ExpandCollapseState.PartiallyExpanded)
+                    {
+                        expandCollapsePattern.Expand();
+                    }
+                    else
+                    {
+                        expandCollapsePattern.Collapse();
+                    }
+
+                    return;
+                }
+
+                if (element.Patterns.LegacyIAccessible.TryGetPattern() is { } legacyPattern)
+                {
+                    legacyPattern.DoDefaultAction();
+                }
+            }
+            catch (COMException ex)
+            {
+                throw new InvalidOperationException("Failed to invoke the element through UI Automation.", ex);
+            }
+            catch (Exception ex) when (IsAutomationException(ex))
+            {
+                throw new InvalidOperationException("Failed to invoke the element through UI Automation.", ex);
+            }
+
+            throw new NotSupportedException("The target element does not expose an invoke-capable automation pattern.");
+        }
+
+        public void SetText(string text)
+        {
+            try
+            {
+                if (element.Patterns.Value.TryGetPattern() is { } valuePattern)
+                {
+                    if (valuePattern.IsReadOnly.ValueOrDefault)
+                    {
+                        throw new InvalidOperationException("The target element is read-only and cannot accept text.");
+                    }
+
+                    element.Focus();
+                    new TextBox(element.FrameworkAutomationElement).Text = text;
+                }
+            }
+            catch (COMException ex)
+            {
+                throw new InvalidOperationException("Failed to set text on the element through UI Automation.", ex);
+            }
+            catch (Exception ex) when (IsAutomationException(ex))
+            {
+                throw new InvalidOperationException("Failed to set text on the element through UI Automation.", ex);
+            }
+
+            throw new NotSupportedException("The target element does not support programmatic text input.");
+        }
+
+        public void SendShortcut(KeyboardShortcut shortcut)
+        {
+            EnsureFocusable();
+
+            // Use PInvoke.SendInput to send the shortcut to the focused element.
+            var inputs = new List<INPUT>();
+            if (shortcut.Modifiers.HasFlag(KeyModifiers.Control)) MakeInputs(VIRTUAL_KEY.VK_CONTROL);
+            if (shortcut.Modifiers.HasFlag(KeyModifiers.Alt)) MakeInputs(VIRTUAL_KEY.VK_MENU);
+            if (shortcut.Modifiers.HasFlag(KeyModifiers.Shift)) MakeInputs(VIRTUAL_KEY.VK_SHIFT);
+            if (shortcut.Modifiers.HasFlag(KeyModifiers.Meta)) MakeInputs(VIRTUAL_KEY.VK_LWIN);
+            MakeInputs(shortcut.Key.ToVirtualKey());
+
+            var result = PInvoke.SendInput(CollectionsMarshal.AsSpan(inputs), Marshal.SizeOf<INPUT>());
+            if (result == 0)
+            {
+                throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to send keyboard input to the target element.");
+            }
+
+            void MakeInputs(VIRTUAL_KEY vk)
+            {
+                inputs.InsertRange(
+                    inputs.Count / 2,
+                    [
+                        new INPUT
+                        {
+                            type = INPUT_TYPE.INPUT_KEYBOARD,
+                            Anonymous = new INPUT._Anonymous_e__Union
+                            {
+                                ki = new KEYBDINPUT
+                                {
+                                    wVk = vk,
+                                    dwFlags = 0,
+                                }
+                            }
+                        },
+                        new INPUT
+                        {
+                            type = INPUT_TYPE.INPUT_KEYBOARD,
+                            Anonymous = new INPUT._Anonymous_e__Union
+                            {
+                                ki = new KEYBDINPUT
+                                {
+                                    wVk = vk,
+                                    dwFlags = KEYBD_EVENT_FLAGS.KEYEVENTF_KEYUP,
+                                }
+                            }
+                        },
+                    ]);
             }
         }
 
@@ -685,6 +833,12 @@ public partial class Win32VisualElementContext : IVisualElementContext
         public nint NativeWindowHandle => 0;
 
         public string? GetText(int maxLength = -1) => null;
+
+        public void Invoke() { } // no-op
+
+        public void SetText(string text) { } // no-op
+
+        public void SendShortcut(KeyboardShortcut shortcut) { } // no-op
 
         public string? GetSelectionText() => null;
 
