@@ -38,6 +38,7 @@
         <DataTemplate DataType="plugins:ChatPluginTextDisplayBlock">
           <ScrollViewer MaxHeight="300">
             <SelectableTextBlock
+              FontFamily="{Binding FontFamily, Converter={x:Static shadui:StringConverters.ToFontFamily}}"
               Text="{Binding Text}"
               TextWrapping="Wrap"/>
           </ScrollViewer>
@@ -74,7 +75,8 @@
                 <DataTemplate DataType="plugins:ChatPluginFileReference">
                   <HyperlinkButton
                     Padding="2"
-                    Command="{Binding OpenFileLocationCommand}">
+                    Command="{Binding OpenFileLocationCommand}"
+                    TextBlock.TextTrimming="CharacterEllipsis">
                     <HyperlinkButton.Content>
                       <StackPanel
                         Orientation="Horizontal" Spacing="4">
@@ -115,11 +117,22 @@
                   <HyperlinkButton
                     Padding="2"
                     Content="{Binding DisplayNameKey^}"
-                    NavigateUri="{Binding Url, Converter={x:Static vc:CommonConverters.StringToUri}}"/>
+                    NavigateUri="{Binding Url, Converter={x:Static vc:CommonConverters.StringToUri}}"
+                    TextBlock.TextTrimming="CharacterEllipsis"/>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="plugins:ChatPluginSeparatorDisplayBlock">
+          <Border
+            Height="{Binding Thickness}"
+            Background="{DynamicResource BorderColor}"/>
+        </DataTemplate>
+        <DataTemplate DataType="plugins:ChatPluginCodeBlockDisplayBlock">
+          <md:CodeBlock
+            Code="{Binding Code}"
+            Language="{Binding Language}"/>
         </DataTemplate>
       </DataTemplates>
     </Setter>

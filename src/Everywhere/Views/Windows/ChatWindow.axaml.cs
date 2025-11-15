@@ -74,7 +74,7 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
         _settings = settings;
 
         InitializeComponent();
-        AddHandler(KeyDownEvent, HandleKeyDown, RoutingStrategies.Tunnel);
+        AddHandler(KeyDownEvent, HandleKeyDown, RoutingStrategies.Tunnel, true);
 
         chatContextManager.PropertyChanged += HandleChatContextManagerPropertyChanged;
         ViewModel.PropertyChanged += HandleViewModelPropertyChanged;
@@ -89,8 +89,7 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
     {
         EnsureInitialized();
         ApplyStyling();
-        StartRendering();
-        StopRendering();
+        ApplyTemplate();
         _windowHelper.SetCloaked(this, true);
         ShowActivated = true;
         Topmost = true;
@@ -98,16 +97,31 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
 
     private void HandleKeyDown(object? sender, KeyEventArgs e)
     {
-        switch (e.Key)
+        switch (e)
         {
-            case Key.Escape when e.KeyModifiers == KeyModifiers.None:
+            case { Key: Key.Escape }:
             {
                 IsOpened = false;
+                e.Handled = true;
                 break;
             }
-            case Key.D when e.KeyModifiers == KeyModifiers.Control:
+            case { Key: Key.D, KeyModifiers: KeyModifiers.Control }:
             {
                 IsWindowPinned = !IsWindowPinned;
+                e.Handled = true;
+                break;
+            }
+            case { Key: Key.N, KeyModifiers: KeyModifiers.Control }:
+            {
+                ViewModel.ChatContextManager.CreateNewCommand.Execute(null);
+                e.Handled = true;
+                break;
+            }
+            case { Key: Key.T, KeyModifiers: KeyModifiers.Control } when
+                _settings.Model.SelectedCustomAssistant?.IsFunctionCallingSupported.ActualValue is true:
+            {
+                _settings.Internal.IsToolCallEnabled = !_settings.Internal.IsToolCallEnabled;
+                e.Handled = true;
                 break;
             }
         }
@@ -309,17 +323,12 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
         var y = Math.Max(area.Y, Math.Min(pos.Y, area.Y + area.Height - size.Height));
         return new PixelPoint(x, y);
     }
-
-    private void HandleTitleBarPointerPressed(object? sender, PointerPressedEventArgs e)
+    
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
-        try
-        {
+        base.OnPointerPressed(e);
+        if (TitleBarBorder.Bounds.Contains(e.GetCurrentPoint(this).Position))
             BeginMoveDrag(e);
-        }
-        catch
-        {
-            // ignored
-        }
     }
 
     private void HandleChatContextManagerPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -358,12 +367,10 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
 
             ShowInTaskbar = IsWindowPinned;
             _windowHelper.SetCloaked(this, false);
-            StartRendering();
             ChatInputBox.Focus();
         }
         else
         {
-            StopRendering();
             ShowInTaskbar = false;
             _windowHelper.SetCloaked(this, true);
         }
@@ -389,33 +396,16 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
         ViewModel.AddClipboardCommand.Execute(null);
     }
 
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-        switch (e)
-        {
-            case { Key: Key.Escape }:
-            {
-                IsOpened = false;
-                break;
-            }
-            case { Key: Key.N, KeyModifiers: KeyModifiers.Control }:
-            {
-                ViewModel.ChatContextManager.CreateNewCommand.Execute(null);
-                break;
-            }
-            case { Key: Key.T, KeyModifiers: KeyModifiers.Control } when
-                _settings.Model.SelectedCustomAssistant?.IsFunctionCallingSupported.ActualValue is true:
-            {
-                _settings.Internal.IsToolCallEnabled = !_settings.Internal.IsToolCallEnabled;
-                break;
-            }
-        }
-
-        base.OnKeyDown(e);
-    }
-
     protected override void OnClosing(WindowClosingEventArgs e)
     {
+        // allow closing only on application or OS shutdown
+        // otherwise, Windows will say "Everywhere is preventing shutdown"
+        if (e.CloseReason is WindowCloseReason.ApplicationShutdown or WindowCloseReason.OSShutdown)
+        {
+            base.OnClosing(e);
+            return;
+        }
+
         // do not allow closing, just hide the window
         e.Cancel = true;
         IsOpened = false;

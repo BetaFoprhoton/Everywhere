@@ -15,7 +15,12 @@
 
   </h1>
 
-  <a href="https://trendshift.io/repositories/15106" target="_blank"><img src="https://trendshift.io/api/badge/repositories/15106" alt="DearVa%2FEverywhere | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+  <div>
+    <a href="https://trendshift.io/repositories/15106" target="_blank"><img src="https://trendshift.io/api/badge/repositories/15106" alt="DearVa%2FEverywhere | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+    <a href="https://www.producthunt.com/products/everywhere?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-everywhere" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1034853&theme=light&t=1762403775174" alt="Everywhere - Every&#0032;moment&#0044;&#0032;&#0032;Every&#0032;place&#0046;&#0032;Your&#0032;AI&#0058;&#0032;Everywhere | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+  </div>
+
+  <br/>
 
   <p align="center">
     <a href="https://everywhere.sylinko.com/zh-CN/"><strong>查看文档 »</strong></a>
@@ -94,9 +99,9 @@
 <table>
   <thead>
     <tr>
-      <th style="width:28%">类别</th>
-      <th style="width:35%">✅ 当前支持</th>
-      <th style="width:41%">🚧 进行中</th>
+      <th style="width:30%">类别</th>
+      <th style="width:45%">✅ 当前支持</th>
+      <th style="width:25%">🚧 进行中</th>
     </tr>
   </thead>
   <tbody>
@@ -120,17 +125,19 @@
     <tr>
       <td><b>⚙️ 工具集成</b></td>
       <td>
-        • 网页搜索
+        • 网络浏览器<br>
+        • 文件系统<br>
+        • 终端<br>
+        • Everything *(Windows)*
       </td>
-      <td>
-        • 系统 API<br>
+      <td><br>
         • MCP 工具
       </td>
     </tr>
     <tr>
-      <td><b>🫧 界面</b></td>
+      <td><b>🫧 交互</b></td>
       <td>
-        • 现代化磨砂玻璃界面<br>
+        • 现代磨砂玻璃界面<br>
         • 上下文感知<br>
         • 键盘快捷键<br>
         • Markdown 渲染
@@ -153,9 +160,7 @@
       <td><b>🌐 语言支持</b></td>
       <td>
         • 简体中文<br>
-        • English
-      </td>
-      <td>
+        • English<br>
         • Deutsch<br>
         • Español<br>
         • Français<br>
@@ -163,10 +168,13 @@
         • 日本語<br>
         • 한국어<br>
         • Русский<br>
+        • Türkçe (感谢 @complex-cgn)<br>
         • 中文 (繁體)<br>
         • 中文 (繁體 香港特別行政區)<br><br>
-        <b>欢迎贡献</b><br>
-        <a href="https://crowdin.com/project/everywhere" rel="nofollow" target="_blank"><img style="width:140px;height:40px" src="https://badges.crowdin.net/badge/dark/crowdin-on-light.png" srcset="https://badges.crowdin.net/badge/dark/crowdin-on-light.png 1x,https://badges.crowdin.net/badge/dark/crowdin-on-light@2x.png 2x" alt="Crowdin | Everywhere" /></a>
+      </td>
+      <td>
+        部分翻译由 AI 辅助完成，<br>
+        欢迎校对改进！<br><br>
       </td>
     </tr>
   </tbody>

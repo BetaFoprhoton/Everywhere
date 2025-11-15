@@ -1,13 +1,14 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using Everywhere.Common;
 using Everywhere.Interop;
 using LiveMarkdown.Avalonia;
 using Lucide.Avalonia;
 using MessagePack;
-using ObservableCollections;
 using ZLinq;
 
 namespace Everywhere.Chat.Plugins;
@@ -24,6 +25,8 @@ namespace Everywhere.Chat.Plugins;
 [Union(5, typeof(ChatPluginFileReferencesDisplayBlock))]
 [Union(6, typeof(ChatPluginFileDifferenceDisplayBlock))]
 [Union(7, typeof(ChatPluginUrlsDisplayBlock))]
+[Union(8, typeof(ChatPluginSeparatorDisplayBlock))]
+[Union(9, typeof(ChatPluginCodeBlockDisplayBlock))]
 public abstract partial class ChatPluginDisplayBlock : ObservableObject
 {
     /// <summary>
@@ -37,17 +40,56 @@ public abstract partial class ChatPluginDisplayBlock : ObservableObject
 /// Represents a container block that can hold other display blocks.
 /// </summary>
 [MessagePackObject(AllowPrivate = true, OnlyIncludeKeyedMembers = true)]
-public sealed partial class ChatPluginContainerDisplayBlock : ChatPluginDisplayBlock
+public sealed partial class ChatPluginContainerDisplayBlock : ChatPluginDisplayBlock, IEnumerable<ChatPluginDisplayBlock>, IDisposable
 {
-    [Key(0)]
-    public ObservableList<ChatPluginDisplayBlock> Children { get; private set; } = [];
+    [IgnoreMember]
+    public ReadOnlyObservableCollection<ChatPluginDisplayBlock> Children { get; }
+
+    [IgnoreMember]
+    public IChatPluginDisplaySink DisplaySink => _displaySink;
+
+    [Key(0)] private readonly ChatPluginDisplaySink _displaySink;
+    [IgnoreMember] private readonly IDisposable _displaySinkConnection;
+
+    [SerializationConstructor]
+    private ChatPluginContainerDisplayBlock(ChatPluginDisplaySink displaySink)
+    {
+        _displaySink = displaySink;
+        Children = _displaySink
+            .Connect()
+            .ObserveOnDispatcher()
+            .BindEx(out _displaySinkConnection);
+    }
+
+    public ChatPluginContainerDisplayBlock() : this(new ChatPluginDisplaySink()) { }
+
+    public void Add(ChatPluginDisplayBlock block) => _displaySink.Add(block);
+
+    public IEnumerator<ChatPluginDisplayBlock> GetEnumerator()
+    {
+        return _displaySink.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return ((IEnumerable)_displaySink).GetEnumerator();
+    }
+
+    public void Dispose()
+    {
+        _displaySink.Dispose();
+        _displaySinkConnection.Dispose();
+    }
 }
 
 [MessagePackObject(AllowPrivate = true, OnlyIncludeKeyedMembers = true)]
-public sealed partial class ChatPluginTextDisplayBlock(string text) : ChatPluginDisplayBlock
+public sealed partial class ChatPluginTextDisplayBlock(string text, string? fontFamily = null) : ChatPluginDisplayBlock
 {
     [Key(0)]
     public string Text { get; } = text;
+
+    [Key(1)]
+    public string? FontFamily { get; } = fontFamily;
 }
 
 [MessagePackObject(AllowPrivate = true, OnlyIncludeKeyedMembers = true)]
@@ -185,9 +227,39 @@ public sealed partial class ChatPluginUrl(string url, DynamicResourceKeyBase dis
     public int Index { get; set; }
 }
 
+/// <summary>
+/// Represents a display block containing multiple URLs.
+/// </summary>
+/// <param name="urls"></param>
 [MessagePackObject(AllowPrivate = true, OnlyIncludeKeyedMembers = true)]
 public sealed partial class ChatPluginUrlsDisplayBlock(params IReadOnlyList<ChatPluginUrl> urls) : ChatPluginDisplayBlock
 {
     [Key(0)]
     public IReadOnlyList<ChatPluginUrl> Urls { get; } = urls;
+}
+
+/// <summary>
+/// Represents a separator display block.
+/// </summary>
+/// <param name="thickness"></param>
+[MessagePackObject(AllowPrivate = true, OnlyIncludeKeyedMembers = true)]
+public sealed partial class ChatPluginSeparatorDisplayBlock(double thickness = 1.0d) : ChatPluginDisplayBlock
+{
+    [Key(0)]
+    public double Thickness { get; } = thickness;
+}
+
+/// <summary>
+/// Represents a code display block with syntax highlighting.
+/// </summary>
+/// <param name="code"></param>
+/// <param name="language"></param>
+[MessagePackObject(AllowPrivate = true, OnlyIncludeKeyedMembers = true)]
+public sealed partial class ChatPluginCodeBlockDisplayBlock(string code, string? language = null) : ChatPluginDisplayBlock
+{
+    [Key(0)]
+    public string Code { get; } = code;
+
+    [Key(1)]
+    public string? Language { get; } = language;
 }

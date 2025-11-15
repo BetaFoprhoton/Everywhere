@@ -42,7 +42,7 @@ public class WatchdogManager : IWatchdogManager, IAsyncInitializer
             throw new InvalidOperationException("WatchdogManager is already initialized.");
         }
 
-        var pipeName = $"Everywhere.Watchdog-{Guid.NewGuid()}";
+        var pipeName = $"Everywhere.Watchdog-{Guid.CreateVersion7().ToString()[..8]}";
         _serverStream = new NamedPipeServerStream(
             pipeName,
             PipeDirection.Out, // The host application only sends commands.
@@ -52,14 +52,21 @@ public class WatchdogManager : IWatchdogManager, IAsyncInitializer
 
         // 1. Start the Watchdog process.
         _logger.LogDebug("Launching Watchdog process with pipe name: {PipeName}", pipeName);
-        _watchdogProcess = Process.Start(new ProcessStartInfo
-        {
-            FileName = "Everywhere.Watchdog.exe",
-            Arguments = pipeName,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
-        });
+        _watchdogProcess = Process.Start(
+            new ProcessStartInfo
+            {
+#if MACOS
+                FileName = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../Resources/Everywhere.Watchdog")),
+#elif WINDOWS
+                FileName = "Everywhere.Watchdog.exe",
+#else
+                FileName = "Everywhere.Watchdog",
+#endif
+                Arguments = pipeName,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+            });
         if (_watchdogProcess is null)
         {
             _logger.LogError("Watchdog process could not be started.");

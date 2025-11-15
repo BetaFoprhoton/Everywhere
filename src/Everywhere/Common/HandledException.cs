@@ -27,6 +27,8 @@ public class HandledException : Exception
     /// </summary>
     public virtual bool IsExpected { get; }
 
+    public virtual bool ShowDetails { get; }
+
     public override string Message
     {
         get
@@ -47,11 +49,13 @@ public class HandledException : Exception
     public HandledException(
         Exception originalException,
         DynamicResourceKey friendlyMessageKey,
-        bool isExpected = true
+        bool isExpected = true,
+        bool showDetails = true
     ) : base(null, originalException)
     {
         FriendlyMessageKey = friendlyMessageKey;
         IsExpected = isExpected;
+        ShowDetails = showDetails;
     }
 
     protected HandledException(Exception originalException) : base(originalException.Message, originalException) { }
@@ -241,11 +245,10 @@ public class HandledSystemException : HandledException
     /// </summary>
     public static Exception Handle(Exception exception, bool? isExpectedOverride = null)
     {
-        if (exception is HandledSystemException systemEx) return systemEx;
         switch (exception)
         {
-            case HandledSystemException handledSystemException:
-                return handledSystemException;
+            case HandledException handledException:
+                return handledException;
             case AggregateException aggregateException:
                 return new AggregateException(aggregateException.Segregate().Select(e => Handle(e, isExpectedOverride)));
         }
@@ -509,6 +512,11 @@ public enum HandledChatExceptionType
     FeatureNotSupport,
 
     /// <summary>
+    /// Selected model does not support image input.
+    /// </summary>
+    ImageNotSupport,
+
+    /// <summary>
     /// Request to the service timed out. Please try again.
     /// </summary>
     Timeout,
@@ -581,6 +589,7 @@ public class HandledChatException : HandledException
                 HandledChatExceptionType.InvalidEndpoint => LocaleKey.HandledChatException_InvalidEndpoint,
                 HandledChatExceptionType.EmptyResponse => LocaleKey.HandledChatException_EmptyResponse,
                 HandledChatExceptionType.FeatureNotSupport => LocaleKey.HandledChatException_FeatureNotSupport,
+                HandledChatExceptionType.ImageNotSupport => LocaleKey.HandledChatException_ImageNotSupport,
                 HandledChatExceptionType.Timeout => LocaleKey.HandledChatException_Timeout,
                 HandledChatExceptionType.NetworkError => LocaleKey.HandledChatException_NetworkError,
                 HandledChatExceptionType.ServiceUnavailable => LocaleKey.HandledChatException_ServiceUnavailable,
@@ -869,6 +878,11 @@ public class HandledChatException : HandledException
                 message.Contains("parameter", StringComparison.OrdinalIgnoreCase))
             {
                 return HandledChatExceptionType.InvalidConfiguration;
+            }
+
+            if (message.Contains("image_url", StringComparison.OrdinalIgnoreCase))
+            {
+                return HandledChatExceptionType.ImageNotSupport;
             }
 
             // Default for 403 Forbidden if no specific keywords are found

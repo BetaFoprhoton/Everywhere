@@ -3,15 +3,14 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Everywhere.Common;
 using Everywhere.Configuration;
 using Everywhere.Interop;
 using Everywhere.Views;
-using Microsoft.Extensions.DependencyInjection;
+using LiveMarkdown.Avalonia;
+using MsBox.Avalonia.Enums;
 using Serilog;
-using ShadUI;
 using Window = Avalonia.Controls.Window;
 
 namespace Everywhere;
@@ -24,56 +23,23 @@ public class App : Application
 
     public override void Initialize()
     {
-        AvaloniaXamlLoader.Load(this);
-
         Dispatcher.UIThread.UnhandledException += (_, e) =>
         {
             Log.Logger.Error(e.Exception, "UI Thread Unhandled Exception");
 
-            NativeMessageBox.Show(
+            NativeMessageBox.ShowAsync(
                 "Unexpected Error",
                 $"An unexpected error occurred:\n{e.Exception.Message}\n\nPlease check the logs for more details.",
-                NativeMessageBoxButtons.Ok,
-                NativeMessageBoxIcon.Error);
+                ButtonEnum.Ok,
+                Icon.Error).WaitOnDispatcherFrame();
 
             e.Handled = true;
         };
 
-#if DEBUG
-        if (Design.IsDesignMode)
-        {
-            ServiceLocator.Build(x => x
+        AvaloniaXamlLoader.Load(this);
 
-                    #region Basic
-
-                    .AddSingleton<IRuntimeConstantProvider, DesignTimeRuntimeConstantProvider>()
-                    .AddSingleton<IVisualElementContext, DesignTimeVisualElementContext>()
-                    .AddSingleton<IShortcutListener, DesignTimeShortcutListener>()
-                    .AddSingleton<INativeHelper, DesignTimeNativeHelper>()
-                    .AddSingleton<Settings>()
-
-                    #endregion
-
-                    #region Avalonia Basic
-
-                    .AddSingleton<DialogManager>()
-                    .AddSingleton<ToastManager>()
-
-                    #endregion
-
-                    #region View & ViewModel
-
-                    .AddSingleton<VisualTreeDebugger>()
-                    .AddSingleton<ChatWindowViewModel>()
-                    .AddSingleton<ChatWindow>()
-                    .AddSingleton<MainViewModel>()
-                    .AddSingleton<MainView>()
-
-                #endregion
-
-            );
-        }
-#endif
+        MarkdownNode.Register<MathInlineNode>();
+        MarkdownNode.Register<MathBlockNode>();
 
         try
         {
@@ -89,11 +55,11 @@ public class App : Application
         {
             Log.Logger.Fatal(ex, "Failed to initialize application");
 
-            NativeMessageBox.Show(
+            NativeMessageBox.ShowAsync(
                 "Initialization Error",
                 $"An error occurred during application initialization:\n{ex.Message}\n\nPlease check the logs for more details.",
-                NativeMessageBoxButtons.Ok,
-                NativeMessageBoxIcon.Error);
+                ButtonEnum.Ok,
+                Icon.Error).WaitOnDispatcherFrame();
         }
 
         Log.ForContext<App>().Information("Application started");
@@ -196,41 +162,3 @@ public class App : Application
         Environment.Exit(0);
     }
 }
-
-#if DEBUG
-#pragma warning disable CS0067 // The event is for design-time only.
-file class DesignTimeRuntimeConstantProvider : IRuntimeConstantProvider
-{
-    public object? this[RuntimeConstantType type] => null;
-}
-
-file class DesignTimeVisualElementContext : IVisualElementContext
-{
-    public event IVisualElementContext.KeyboardFocusedElementChangedHandler? KeyboardFocusedElementChanged;
-    public IVisualElement? KeyboardFocusedElement => null;
-    public IVisualElement? ElementFromPoint(PixelPoint point, PickElementMode mode = PickElementMode.Element) => null;
-    public IVisualElement? ElementFromPointer(PickElementMode mode = PickElementMode.Element) => null;
-    public Task<IVisualElement?> PickElementAsync(PickElementMode mode) => Task.FromResult<IVisualElement?>(null);
-}
-
-file class DesignTimeShortcutListener : IShortcutListener
-{
-    public IDisposable Register(KeyboardShortcut shortcut, Action handler) => throw new NotSupportedException();
-    public IDisposable Register(MouseShortcut shortcut, Action handler) => throw new NotSupportedException();
-    public IKeyboardShortcutScope StartCaptureKeyboardShortcut() => throw new NotSupportedException();
-}
-
-file class DesignTimeNativeHelper : INativeHelper
-{
-    public bool IsInstalled => false;
-    public bool IsAdministrator => false;
-    public bool IsUserStartupEnabled { get; set; }
-    public bool IsAdministratorStartupEnabled { get; set; }
-    public void RestartAsAdministrator() { }
-    public Task<WriteableBitmap?> GetClipboardBitmapAsync() => Task.FromResult<WriteableBitmap?>(null);
-    public void ShowDesktopNotification(string message, string? title) { }
-    public void OpenFileLocation(string fullPath) { }
-}
-
-#pragma warning restore CS0067 // The event is for design-time only.
-#endif

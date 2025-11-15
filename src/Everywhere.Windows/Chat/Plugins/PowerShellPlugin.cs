@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
+using System.Diagnostics;
 using System.Reflection;
+using DynamicData;
 using Everywhere.Chat.Permissions;
 using Everywhere.Chat.Plugins;
+using Everywhere.Common;
 using Everywhere.Extensions;
 using Everywhere.I18N;
 using Lucide.Avalonia;
 using Microsoft.Extensions.Logging;
-using Microsoft.PowerShell;
 using Microsoft.SemanticKernel;
 
 namespace Everywhere.Windows.Chat.Plugins;
@@ -29,21 +29,7 @@ public class PowerShellPlugin : BuiltInChatPlugin
     {
         _logger = logger;
 
-        // Load powershell module
-        // from: https://github.com/PowerShell/PowerShell/issues/25793
-        var path = Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
-#if NET9_0
-        var modulesPath = Path.Combine(path ?? ".", "runtimes", "win", "lib", "net9.0", "Modules");
-#else
-        #error Target framework not supported
-#endif
-        Environment.SetEnvironmentVariable(
-            "PSModulePath",
-            $"{Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\Modules")};" +
-            $"{modulesPath};" + // Import application auto-contained modules
-            Environment.GetEnvironmentVariable("PSModulePath"));
-
-        _functions.Add(
+        _functionsSource.Add(
             new NativeChatFunction(
                 ExecuteScriptAsync,
                 ChatFunctionPermissions.ShellExecute));
@@ -65,7 +51,7 @@ public class PowerShellPlugin : BuiltInChatPlugin
             throw new ArgumentException("Script cannot be null or empty.", nameof(script));
         }
 
-        string consentKey;
+        string? consentKey;
         var trimmedScript = script.AsSpan().Trim();
         if (trimmedScript.Count('\n') == 0)
         {
@@ -75,39 +61,91 @@ public class PowerShellPlugin : BuiltInChatPlugin
         }
         else
         {
-            // multi-line script, show full script to user
-            consentKey = "multi";
+            // multi-line script, ask every time
+            consentKey = null;
         }
+
+        var detailBlock = new ChatPluginContainerDisplayBlock
+        {
+            new ChatPluginTextDisplayBlock(description),
+            new ChatPluginCodeBlockDisplayBlock(script, "powershell"),
+        };
 
         var consent = await userInterface.RequestConsentAsync(
             consentKey,
             new DynamicResourceKey(LocaleKey.NativeChatPlugin_PowerShell_ExecuteScript_ScriptConsent_Header),
-            new ChatPluginContainerDisplayBlock
-            {
-                Children =
-                {
-                    new ChatPluginTextDisplayBlock(description),
-                    new ChatPluginTextDisplayBlock(script),
-                }
-            },
+            detailBlock,
             cancellationToken);
-        if (!consent) return "User denied execution of the script.";
-
-        // Use PowerShell to execute the script and return the output
-        var iss = InitialSessionState.CreateDefault2();
-        iss.ExecutionPolicy = ExecutionPolicy.Bypass;
-        // Set to ConstrainedLanguage to enhance security
-        iss.LanguageMode = PSLanguageMode.ConstrainedLanguage;
-        using var powerShell = PowerShell.Create(iss);
-        powerShell.AddScript(script);
-
-        var results = await powerShell.InvokeAsync();
-        if (powerShell.HadErrors)
+        if (!consent)
         {
-            var errorMessages = powerShell.Streams.Error.Select(e => e.ToString());
-            throw new InvalidOperationException($"PowerShell script execution failed: {string.Join(Environment.NewLine, errorMessages)}");
+            throw new HandledException(
+                new UnauthorizedAccessException("User denied consent for PowerShell script execution."),
+                new DynamicResourceKey(LocaleKey.NativeChatPlugin_PowerShell_ExecuteScript_DenyMessage),
+                showDetails: false);
         }
 
-        return string.Join(Environment.NewLine, results.Select(r => r.ToString()));
+        userInterface.DisplaySink.AppendBlocks(detailBlock.Children);
+
+        var path = Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ?? ".";
+        using var process = Process.Start(new ProcessStartInfo
+        {
+            FileName = Path.GetFullPath(Path.Combine(path, "Everywhere.Windows.PowerShell.exe")),
+            RedirectStandardError = true,
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        });
+
+        if (process is null)
+        {
+            throw new SystemException("Failed to start PowerShell script execution process.");
+        }
+
+        await using var registration = cancellationToken.Register(() =>
+        {
+            // ReSharper disable once MethodSupportsCancellation
+            Task.Run(() =>
+            {
+                try
+                {
+                    Process.Start(
+                        new ProcessStartInfo
+                        {
+                            FileName = "taskkill",
+                            // ReSharper disable once AccessToDisposedClosure
+                            Arguments = $"/PID {process.Id} /T /F",
+                            RedirectStandardError = true,
+                            RedirectStandardOutput = true,
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                        });
+                }
+                catch
+                {
+                    // ignore
+                }
+            });
+        });
+
+        await process.StandardInput.WriteAsync(script);
+        process.StandardInput.Close();
+
+        var result = await process.StandardOutput.ReadToEndAsync(cancellationToken);
+        var errorOutput = await process.StandardError.ReadToEndAsync(cancellationToken);
+
+        await process.WaitForExitAsync(cancellationToken);
+        if (process.ExitCode != 0)
+        {
+            throw new HandledException(
+                new SystemException($"PowerShell script execution failed: {errorOutput}"),
+                new FormattedDynamicResourceKey(
+                    LocaleKey.NativeChatPlugin_PowerShell_ExecuteScript_ErrorMessage,
+                    new DirectResourceKey(errorOutput)),
+                showDetails: false);
+        }
+
+        userInterface.DisplaySink.AppendCodeBlock(result, "log");
+        return result;
     }
 }

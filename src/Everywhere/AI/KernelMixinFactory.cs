@@ -1,12 +1,15 @@
 ﻿using Everywhere.Common;
+using Microsoft.Extensions.Logging;
 
 namespace Everywhere.AI;
 
 /// <summary>
 /// A factory for creating instances of <see cref="IKernelMixin"/>.
 /// </summary>
-public class KernelMixinFactory : IKernelMixinFactory
+public class KernelMixinFactory(IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory) : IKernelMixinFactory
 {
+    private readonly Lock _syncLock = new();
+
     private KernelMixinBase? _cachedKernelMixin;
 
     /// <summary>
@@ -18,6 +21,8 @@ public class KernelMixinFactory : IKernelMixinFactory
     /// <exception cref="HandledChatException">Thrown if the model provider or definition is not found or not supported.</exception>
     public IKernelMixin GetOrCreate(CustomAssistant customAssistant, string? apiKeyOverride = null)
     {
+        using var lockScope = _syncLock.EnterScope();
+
         if (!Uri.TryCreate(customAssistant.Endpoint.ActualValue, UriKind.Absolute, out _))
         {
             throw new HandledChatException(
@@ -34,20 +39,27 @@ public class KernelMixinFactory : IKernelMixinFactory
 
         var apiKey = apiKeyOverride ?? customAssistant.ApiKey;
         if (_cachedKernelMixin is not null &&
-            _cachedKernelMixin.Schema == customAssistant.Schema &&
-            _cachedKernelMixin.ModelId == customAssistant.ModelId &&
+            _cachedKernelMixin.Schema == customAssistant.Schema.ActualValue &&
+            _cachedKernelMixin.ModelId == customAssistant.ModelId.ActualValue &&
             _cachedKernelMixin.Endpoint == customAssistant.Endpoint.ActualValue.Trim().Trim('/') &&
-            _cachedKernelMixin.ApiKey == apiKey)
+            _cachedKernelMixin.ApiKey == apiKey &&
+            _cachedKernelMixin.RequestTimeoutSeconds == customAssistant.RequestTimeoutSeconds.ActualValue)
         {
             return _cachedKernelMixin;
         }
 
         _cachedKernelMixin?.Dispose();
+
+        // Create an HttpClient instance using the factory.
+        // It will have the configured settings (timeout and proxy).
+        var httpClient = httpClientFactory.CreateClient();
+        httpClient.Timeout = TimeSpan.FromSeconds(customAssistant.RequestTimeoutSeconds.ActualValue);
         return _cachedKernelMixin = customAssistant.Schema.ActualValue switch
         {
-            ModelProviderSchema.OpenAI => new OpenAIKernelMixin(customAssistant),
-            ModelProviderSchema.Anthropic => new AnthropicKernelMixin(customAssistant),
-            ModelProviderSchema.Ollama => new OllamaKernelMixin(customAssistant),
+            ModelProviderSchema.OpenAI => new OpenAIKernelMixin(customAssistant, httpClient, loggerFactory),
+            ModelProviderSchema.Anthropic => new AnthropicKernelMixin(customAssistant, httpClient),
+            ModelProviderSchema.Google => new GoogleKernelMixin(customAssistant, httpClient, loggerFactory),
+            ModelProviderSchema.Ollama => new OllamaKernelMixin(customAssistant, httpClient),
             _ => throw new HandledChatException(
                 new NotSupportedException($"Model provider schema '{customAssistant.Schema}' is not supported."),
                 HandledChatExceptionType.InvalidConfiguration,

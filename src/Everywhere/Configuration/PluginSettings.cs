@@ -1,12 +1,11 @@
-﻿using Everywhere.Chat.Permissions;
-using ObservableCollections;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Everywhere.Chat.Permissions;
+using Everywhere.Collections;
 
 namespace Everywhere.Configuration;
 
-public class PluginSettings : SettingsCategory
+public class PluginSettings : ObservableObject
 {
-    public override string Header => "Plugin";
-
     /// <summary>
     /// Gets or sets whether each plugin is enabled.
     /// </summary>

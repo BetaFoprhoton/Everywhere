@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Anthropic.SDK.Messaging;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Messaging;
 using Everywhere.AI;
 using Everywhere.Chat.Permissions;
 using Everywhere.Chat.Plugins;
@@ -350,27 +351,33 @@ public class ChatService(
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var chatSpan = new AssistantChatMessageSpan();
-                assistantChatMessage.Spans.Add(chatSpan);
-                var functionCallContents = await GetStreamingChatMessageContentsAsync(
-                    kernel,
-                    kernelMixin,
-                    chatHistory,
-                    customAssistant,
-                    chatSpan,
-                    assistantChatMessage,
-                    cancellationToken);
-                if (functionCallContents.Count <= 0) break;
+                assistantChatMessage.AddSpan(chatSpan);
+                try
+                {
+                    var functionCallContents = await GetStreamingChatMessageContentsAsync(
+                        kernel,
+                        kernelMixin,
+                        chatHistory,
+                        customAssistant,
+                        chatSpan,
+                        assistantChatMessage,
+                        cancellationToken);
+                    if (functionCallContents.Count <= 0) break;
 
-                toolCallCount += functionCallContents.Count;
+                    toolCallCount += functionCallContents.Count;
 
-                await InvokeFunctionsAsync(kernel, chatContext, chatHistory, chatSpan, functionCallContents, cancellationToken);
-
-                chatSpan.FinishedAt = DateTimeOffset.UtcNow;
+                    await InvokeFunctionsAsync(kernel, chatContext, chatHistory, chatSpan, functionCallContents, cancellationToken);
+                }
+                finally
+                {
+                    chatSpan.FinishedAt = DateTimeOffset.UtcNow;
+                    chatSpan.ReasoningFinishedAt = DateTimeOffset.UtcNow;
+                }
             }
 
             activity?.SetTag("tool_calls.count", toolCallCount);
 
-            if (!chatContext.IsTemporary && // Do not generate titles for temporary contexts.
+            if (!chatContext.Metadata.IsTemporary && // Do not generate titles for temporary contexts.
                 chatContext.Metadata.Topic.IsNullOrEmpty() &&
                 chatHistory.Any(c => c.Role == AuthorRole.User) &&
                 chatHistory.Any(c => c.Role == AuthorRole.Assistant) &&
@@ -618,7 +625,7 @@ public class ChatService(
                 chatFunction,
                 functionCallChatMessage);
 
-            chatSpan.FunctionCalls.Add(functionCallChatMessage);
+            chatSpan.AddFunctionCall(functionCallChatMessage);
 
             // Add call message to the chat history.
             var functionCallMessage = new ChatMessageContent(AuthorRole.Assistant, content: null);
@@ -645,7 +652,7 @@ public class ChatService(
                     // Also add a display block for the function call content.
                     // This will allow the UI to display the function call content.
                     var friendlyContent = chatFunction.GetFriendlyCallContent(functionCallContent);
-                    if (friendlyContent is not null) functionCallChatMessage.DisplayBlocks.Add(friendlyContent);
+                    if (friendlyContent is not null) functionCallChatMessage.DisplaySink.AppendBlock(friendlyContent);
 
                     // Add the function call content to the chat history.
                     // This will allow the LLM to see the function call in the chat history.
@@ -663,8 +670,6 @@ public class ChatService(
                     // dd the function result content to the function call chat message.
                     // This will record the function result in the database.
                     functionCallChatMessage.Results.Add(resultContent);
-
-                    // TODO: Also add a display block for the function result content?
 
                     // Add the function result content to the chat history.
                     // This will allow the LLM to see the function result in the chat history.
@@ -716,7 +721,7 @@ public class ChatService(
             {
                 // The function requires permissions that are not granted.
                 var promise = new TaskCompletionSource<ConsentDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
-                EventHub<ChatPluginConsentRequest>.Publish(
+                WeakReferenceMessenger.Default.Send(
                     new ChatPluginConsentRequest(
                         promise,
                         new FormattedDynamicResourceKey(
@@ -724,6 +729,7 @@ public class ChatService(
                             context.Function.HeaderKey,
                             new DirectResourceKey(context.Function.Permissions.I18N(LocaleKey.Common_Comma.I18N(), true))),
                         friendlyContent,
+                        true,
                         cancellationToken));
 
                 var consentDecision = await promise.Task;
@@ -859,8 +865,12 @@ public class ChatService(
                     var result = functionCall.Results.AsValueEnumerable().FirstOrDefault(r => r.CallId == callId);
                     yield return result?.ToChatMessage() ?? new ChatMessageContent(
                         AuthorRole.Tool,
-                        $"Error: No result found for function call ID '{callId}'. " +
-                        $"This may caused by an error during function execution or user cancellation.");
+                        [
+                            new FunctionResultContent(
+                                functionCall.Calls[callIndex],
+                                $"Error: No result found for function call ID '{callId}'. " +
+                                $"This may caused by an error during function execution or user cancellation.")
+                        ]);
 
                     if (result is not null &&
                         await TryCreateExtraToolCallResultsContentAsync(result, cancellationToken) is { } extraToolCallResultsContent)
@@ -969,7 +979,7 @@ public class ChatService(
 
         try
         {
-            var language = settings.Common.Language == "default" ? "en-US" : settings.Common.Language;
+            var language = settings.Common.Language.ToEnglishName();
 
             activity?.SetTag("chat.context.id", metadata.Id);
             activity?.SetTag("user_message.length", userMessage.Length);
@@ -1010,47 +1020,61 @@ public class ChatService(
         }
     }
 
+    public IChatPluginDisplaySink DisplaySink =>
+        _currentFunctionCallContext?.ChatMessage.DisplaySink ?? throw new InvalidOperationException("No active function call to display sink for");
+
     public async Task<bool> RequestConsentAsync(
-        string id,
+        string? id,
         DynamicResourceKeyBase headerKey,
         ChatPluginDisplayBlock? content = null,
         CancellationToken cancellationToken = default)
     {
-        if (id.IsNullOrWhiteSpace())
-        {
-            throw new ArgumentException("Consent request ID cannot be null or whitespace", nameof(id));
-        }
-
         if (_currentFunctionCallContext is null)
         {
             throw new InvalidOperationException("No active function call to request consent for");
         }
 
-        // Check if the permission is already granted
-        var grantedPermissions = ChatFunctionPermissions.None;
-        var permissionKey = $"{_currentFunctionCallContext.PermissionKey}.{id}";
-        if (settings.Plugin.GrantedPermissions.TryGetValue(permissionKey, out var extra))
+        string? permissionKey = null;
+        if (!id.IsNullOrWhiteSpace())
         {
-            grantedPermissions |= extra;
-        }
-        if (_currentFunctionCallContext.ChatContext.GrantedPermissions.TryGetValue(permissionKey, out var session))
-        {
-            grantedPermissions |= session;
-        }
-        if ((grantedPermissions & _currentFunctionCallContext.Function.Permissions) == _currentFunctionCallContext.Function.Permissions)
-        {
-            return true;
+            // Check if the permission is already granted
+            var grantedPermissions = ChatFunctionPermissions.None;
+            permissionKey = $"{_currentFunctionCallContext.PermissionKey}.{id}";
+            if (settings.Plugin.GrantedPermissions.TryGetValue(permissionKey, out var extra))
+            {
+                grantedPermissions |= extra;
+            }
+            if (_currentFunctionCallContext.ChatContext.GrantedPermissions.TryGetValue(permissionKey, out var session))
+            {
+                grantedPermissions |= session;
+            }
+            if ((grantedPermissions & _currentFunctionCallContext.Function.Permissions) == _currentFunctionCallContext.Function.Permissions)
+            {
+                return true;
+            }
         }
 
         var promise = new TaskCompletionSource<ConsentDecision>(TaskCreationOptions.RunContinuationsAsynchronously);
-        EventHub<ChatPluginConsentRequest>.Publish(
+        WeakReferenceMessenger.Default.Send(
             new ChatPluginConsentRequest(
                 promise,
                 headerKey,
                 content,
+                permissionKey is not null,
                 cancellationToken));
 
         var consentDecision = await promise.Task;
+
+        if (permissionKey is null)
+        {
+            // no id provided, so we cannot remember the decision
+            return consentDecision switch
+            {
+                ConsentDecision.AllowOnce => true,
+                _ => false,
+            };
+        }
+
         switch (consentDecision)
         {
             case ConsentDecision.AlwaysAllow:
@@ -1086,7 +1110,4 @@ public class ChatService(
     {
         throw new NotImplementedException();
     }
-
-    public IChatPluginDisplaySink RequestDisplaySink() =>
-        _currentFunctionCallContext?.ChatMessage ?? throw new InvalidOperationException("No active function call to display sink for");
 }

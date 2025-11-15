@@ -1,3 +1,68 @@
+## [v0.4.5](https://github.com/DearVa/Everywhere/releases/tag/v0.4.5) - 2025-11-13
+
+### ✨ Features
+- Added a setting for model request timeout.
+- Added shortcuts in settings to "Edit configuration file" and "Open log folder" (Thanks @TheNotoBarth).
+- Added rendering support for LaTeX formulas.
+
+### 🚀 Improvements
+- Network proxy settings now take effect immediately without requiring an application restart.
+- Improved error messages for large language models (Thanks @TheNotoBarth).
+- Optimized the loading performance of the settings page.
+- Removed the unsupported `x-ai/grok-4-fast:free` model from OpenRouter.
+- Improved the display of some error messages.
+
+### 🐛 Bug Fixes
+- Refactored the underlying data model to fix a bug where messages could be displayed repeatedly.
+- Fixed a potential memory leak.
+- Optimized the display logic for dialog boxes to prevent them from going beyond the window boundaries and becoming inoperable.
+- Fixed an issue where model requests could not handle redirects automatically.
+
+**Full Changelog**: https://github.com/DearVa/Everywhere/compare/v0.4.4...v0.4.5
+
+
+
+## [v0.4.4](https://github.com/DearVa/Everywhere/releases/tag/v0.4.4) - 2025-11-5
+
+- 📢 The macOS version is on the way and is expected to be released in v0.5.0. Good things take time, so please be patient!
+
+### ✨ Features
+- Added network proxy settings, which can be configured manually. **A restart is required for changes to take effect!**
+- Added language support for Spanish, Russian, French, Italian, Japanese, Korean, Turkish, and Traditional Chinese (translated by GPT-4o).
+
+### 🚀 Improvements
+- Optimized chat plugins:
+  - Chat plugin features now display user-friendly descriptions.
+  - PowerShell now shows detailed explanations, specific commands, and the final output.
+  - For security reasons, the "Allow for this session" and "Always allow" options are not available for multi-line PowerShell script execution.
+
+### 🐛 Bug Fixes
+- Fixed an issue where PowerShell execution could not be interrupted (#104).
+
+**Full Changelog**: https://github.com/DearVa/Everywhere/compare/v0.4.3...v0.4.4
+
+
+
+## [v0.4.3](https://github.com/DearVa/Everywhere/releases/tag/v0.4.3) - 2025-11-2
+
+### ✨ Features
+- Added Türkçe language support (Thanks @complex-cgn)
+- Improved chat history viewing & management (including topic editing and multi-selecting/deleting chats)
+
+### 🚀 Improvements
+- Reduced memory usage & UI freeze when rendering markdown codeblocks (2700% improvement)
+- Added more icons to the assistant IconEditor and optimized its performance
+
+### 🐛 Bug Fixes
+- (Windows) Fixed an issue where Everywhere could prevent system shutdown
+- Fixed an issue where the chat window could not be closed by pressing the Esc key
+- Fixed an issue where canceling a tool call could prevent the conversation from continuing
+- Fixed an issue where some reasoning-focused LLMs could not use tools correctly
+
+**Full Changelog**: https://github.com/DearVa/Everywhere/compare/v0.4.2...v0.4.3
+
+
+
 ## [v0.4.2](https://github.com/DearVa/Everywhere/releases/tag/v0.4.2) - 2025-10-28
 
 ### ✨ Features

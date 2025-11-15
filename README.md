@@ -15,7 +15,12 @@ Every moment, Every place. Your AI - `Everywhere`
 
   </h1>
 
-  <a href="https://trendshift.io/repositories/15106" target="_blank"><img src="https://trendshift.io/api/badge/repositories/15106" alt="DearVa%2FEverywhere | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+  <div>
+    <a href="https://trendshift.io/repositories/15106" target="_blank"><img src="https://trendshift.io/api/badge/repositories/15106" alt="DearVa%2FEverywhere | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+    <a href="https://www.producthunt.com/products/everywhere?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-everywhere" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1034853&theme=light&t=1762403775174" alt="Everywhere - Every&#0032;moment&#0044;&#0032;&#0032;Every&#0032;place&#0046;&#0032;Your&#0032;AI&#0058;&#0032;Everywhere | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+  </div>
+
+  <br/>
 
   <p align="center">
     <a href="https://everywhere.sylinko.com"><strong>Explore the docs »</strong></a>
@@ -94,9 +99,9 @@ Every moment, Every place. Your AI - `Everywhere`
 <table>
   <thead>
     <tr>
-      <th style="width:28%">Category</th>
-      <th style="width:35%">✅ Currently Supported</th>
-      <th style="width:41%">🚧 Work in Progress</th>
+      <th style="width:30%">Category</th>
+      <th style="width:45%">✅ Currently Supported</th>
+      <th style="width:25%">🚧 Work in Progress</th>
     </tr>
   </thead>
   <tbody>
@@ -120,15 +125,17 @@ Every moment, Every place. Your AI - `Everywhere`
     <tr>
       <td><b>⚙️ Tool Integration</b></td>
       <td>
-        • Web Search
+        • Web Browser<br>
+        • File System<br>
+        • Terminal<br>
+        • Everything *(Windows)*
       </td>
       <td>
-        • System APIs<br>
-        • MCP tools<br>
+        • MCP tools
       </td>
     </tr>
     <tr>
-      <td><b>🫧 Interface</b></td>
+      <td><b>🫧 Interactive</b></td>
       <td>
         • Modern Frosted Glass UI<br>
         • Context-aware invocation<br>
@@ -153,9 +160,7 @@ Every moment, Every place. Your AI - `Everywhere`
       <td><b>🌐 Language Support</b></td>
       <td>
         • 简体中文<br>
-        • English
-      </td>
-      <td>
+        • English<br>
         • Deutsch<br>
         • Español<br>
         • Français<br>
@@ -163,10 +168,13 @@ Every moment, Every place. Your AI - `Everywhere`
         • 日本語<br>
         • 한국어<br>
         • Русский<br>
+        • Türkçe (Thanks @complex-cgn)<br>
         • 中文 (繁體)<br>
         • 中文 (繁體 香港特別行政區)<br><br>
-        <b>Contributions Welcome</b><br>
-        <a href="https://crowdin.com/project/everywhere" rel="nofollow" target="_blank"><img style="width:140px;height:40px" src="https://badges.crowdin.net/badge/dark/crowdin-on-light.png" srcset="https://badges.crowdin.net/badge/dark/crowdin-on-light.png 1x,https://badges.crowdin.net/badge/dark/crowdin-on-light@2x.png 2x" alt="Crowdin | Everywhere" /></a>
+      </td>
+      <td>
+        Some translations were AI-assisted.<br>
+        Feedback and corrections are welcome!<br><br>
       </td>
     </tr>
   </tbody>
