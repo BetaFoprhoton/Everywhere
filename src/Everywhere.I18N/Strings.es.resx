@@ -47,7 +47,7 @@
         <value>Claro</value>
     </data>
     <data name="ProxySettings_IsEnabled_Header" xml:space="preserve">
-        <value>Usar proxy personalizado</value>
+        <value>Usar Proxy Personalizado</value>
     </data>
     <data name="ProxySettings_IsEnabled_Description" xml:space="preserve">
         <value>Sobrescribir el proxy del sistema con un proxy específico de la aplicación.</value>
@@ -59,19 +59,19 @@
         <value>Introduce la URI del proxy, por ejemplo http://127.0.0.1:7890.</value>
     </data>
     <data name="ProxySettings_BypassOnLocal_Header" xml:space="preserve">
-        <value>Omitir proxy para direcciones locales</value>
+        <value>Omitir Direcciones Locales</value>
     </data>
     <data name="ProxySettings_BypassOnLocal_Description" xml:space="preserve">
         <value>Enviar solicitudes a direcciones de intranet y loopback directamente.</value>
     </data>
     <data name="ProxySettings_BypassList_Header" xml:space="preserve">
-        <value>Lista de omisión</value>
+        <value>Lista de Omitidos</value>
     </data>
     <data name="ProxySettings_BypassList_Description" xml:space="preserve">
         <value>Opcional. Un patrón por línea; los hosts coincidentes omiten el proxy.</value>
     </data>
     <data name="ProxySettings_UseAuthentication_Header" xml:space="preserve">
-        <value>Autenticación de proxy</value>
+        <value>Autenticación de Proxy</value>
     </data>
     <data name="ProxySettings_UseAuthentication_Description" xml:space="preserve">
         <value>Habilitar credenciales cuando el proxy requiera autenticación.</value>
@@ -177,6 +177,15 @@
     </data>
     <data name="ChatWindow_Close_ToolTip" xml:space="preserve">
         <value>Cerrar (Esc)</value>
+    </data>
+    <data name="ChatWindow_DragDrop_Overlay_DropFilesHere" xml:space="preserve">
+        <value>Suelta los archivos aquí</value>
+    </data>
+    <data name="ChatWindow_DragDrop_Overlay_DropTextHere" xml:space="preserve">
+        <value>Suelta el texto aquí para insertar</value>
+    </data>
+    <data name="ChatWindow_DragDrop_Overlay_Unsupported" xml:space="preserve">
+        <value>Este tipo de elemento no es compatible</value>
     </data>
     <data name="ChatWindow_ChatInputBox_AddAttachmentMenuItems_PickVisualElement" xml:space="preserve">
         <value>Seleccionar Elemento Visual</value>
@@ -531,13 +540,13 @@
         <value>Para modelos en línea, necesitas obtenerla del sitio oficial correspondiente, por favor consulta la guía para más detalles.</value>
     </data>
     <data name="CustomAssistant_IsImageInputSupported_Header" xml:space="preserve">
-        <value>Soporte para Entrada de Imágenes</value>
+        <value>Soporte de Entrada de Imagen</value>
     </data>
     <data name="CustomAssistant_IsImageInputSupported_Description" xml:space="preserve">
         <value>Puedes subir imágenes en el contexto del chat. Si no estás seguro de lo que haces, mantén el valor predeterminado. Si el modelo no soporta entradas de imágenes, habilitar esto puede causar fallos.</value>
     </data>
     <data name="CustomAssistant_IsFunctionCallingSupported_Header" xml:space="preserve">
-        <value>Soporte para Uso de Herramientas</value>
+        <value>Soporte de Uso de Herramientas</value>
     </data>
     <data name="CustomAssistant_IsFunctionCallingSupported_Description" xml:space="preserve">
         <value>El modelo puede usar las herramientas que configuraste en el contexto del chat. Si no estás seguro de lo que haces, mantén el valor predeterminado. Si el modelo no soporta llamadas a funciones, habilitar esto puede causar fallos.</value>
@@ -546,7 +555,7 @@
         <value>El modelo puede pensar antes de responder. Si no estás seguro de lo que haces, mantén el valor predeterminado. Si el modelo no soporta pensamiento profundo, habilitar esto puede causar fallos.</value>
     </data>
     <data name="CustomAssistant_IsDeepThinkingSupported_Header" xml:space="preserve">
-        <value>Soporte para Pensamiento Profundo</value>
+        <value>Soporte de Pensamiento Profundo</value>
     </data>
     <data name="CustomAssistant_MaxTokens_Description" xml:space="preserve">
         <value>La longitud máxima del contexto de un solo chat. Si no estás seguro de lo que haces, mantén el valor predeterminado. Configurar esto más grande que el valor predeterminado puede causar fallos.</value>
@@ -837,7 +846,7 @@ Mi inteligencia proviene de poderosos modelos de lenguaje grande (LLMs), que son
         <value>Habilitar telemetría</value>
     </data>
     <data name="CommonSettings_DiagnosticData_Header" xml:space="preserve">
-        <value>Datos de diagnóstico</value>
+        <value>Diagnósticos</value>
     </data>
     <data name="CommonSettings_DiagnosticData_Description" xml:space="preserve">
         <value>Para ayudarnos a mejorar, necesitamos la “telemetría” para recopilar datos anónimos. Estos datos se utilizan únicamente para análisis y no contienen ni permiten inferir ninguna información personal identificable sobre ti. Puedes elegir enviar solo los datos necesarios; esta opción no afectará la funcionalidad principal.</value>
@@ -867,7 +876,7 @@ Mi inteligencia proviene de poderosos modelos de lenguaje grande (LLMs), que son
         <value>La clave API falta o es inválida.</value>
     </data>
     <data name="HandledChatException_QuotaExceeded" xml:space="preserve">
-        <value>Se ha excedido la cuota de uso de la API, o no se tiene permiso para acceder al modelo actual.</value>
+        <value>Se han superado las cuotas de uso de la API, lo que indica típicamente un saldo insuficiente o falta de permisos de acceso para el modelo actual.</value>
     </data>
     <data name="HandledChatException_RateLimit" xml:space="preserve">
         <value>Solicitud demasiado frecuente, saldo insuficiente o red/región no admitida.</value>
@@ -891,7 +900,7 @@ Mi inteligencia proviene de poderosos modelos de lenguaje grande (LLMs), que son
         <value>La solicitud al servicio ha expirado. Por favor, inténtalo de nuevo.</value>
     </data>
     <data name="HandledChatException_NetworkError" xml:space="preserve">
-        <value>Ocurrió un error de red. Por favor, verifica tu conexión e inténtalo de nuevo.</value>
+        <value>Ha ocurrido un error de red. Por favor, verifica tu red o la configuración del proxy, o tu proveedor de servicios puede no soportar tu región.</value>
     </data>
     <data name="HandledChatException_ServiceUnavailable" xml:space="preserve">
         <value>El servicio no está disponible en este momento. Por favor, inténtalo más tarde.</value>
@@ -972,7 +981,7 @@ Mi inteligencia proviene de poderosos modelos de lenguaje grande (LLMs), que son
         <value>Ejecutar script de shell</value>
     </data>
     <data name="HandledChatException_ContextLengthExceeded" xml:space="preserve">
-        <value>Longitud de contexto excedida.</value>
+        <value>La longitud del contexto excede el límite. Intenta crear un nuevo chat o cambiar a un modelo con un contexto más largo.</value>
     </data>
     <data name="ChatFunctionPermissions_ProcessAccess" xml:space="preserve">
         <value>Acceder al proceso</value>
@@ -1492,7 +1501,7 @@ Rueda de desplazamiento o teclas numéricas para cambiar modos de selección</va
         <value>Establece el tiempo de espera para que el modelo devuelva resultados, medido en segundos. Para modelos más lentos (como modelos de pensamiento y modelos locales), considera extender este tiempo adecuadamente.</value>
     </data>
     <data name="CustomAssistant_RequestTimeoutSeconds_Header" xml:space="preserve">
-        <value>Duración del tiempo de espera de la solicitud</value>
+        <value>Tiempo de Espera de Solicitud</value>
     </data>
     <data name="NativeChatPlugin_PowerShell_ExecuteScript_DenyMessage" xml:space="preserve">
         <value>El usuario denegó el consentimiento para la ejecución del script de PowerShell.</value>
@@ -1505,5 +1514,8 @@ Rueda de desplazamiento o teclas numéricas para cambiar modos de selección</va
     </data>
     <data name="DynamicWebProxy_CreateProxy_EndpointSchemeUnsupported_ErrorMessage" xml:space="preserve">
         <value>El esquema del servidor proxy '{0}' no es compatible.</value>
+    </data>
+    <data name="ChatFileAttachment_Create_FileTooLarge" xml:space="preserve">
+        <value>El tamaño del archivo ({0}) excede el tamaño máximo permitido ({1}).</value>
     </data>
 </root>
