@@ -1,3 +1,142 @@
+## [v0.5.5](https://github.com/DearVa/Everywhere/releases/tag/v0.5.5) - 2025-12-21
+
+### 🚀 Improvements
+- Optimized various UI visual details.
+
+### 🐛 Bug Fixes
+- Fixed an issue where the "Everywhere minimized to tray" notification appeared every time.
+- Fixed an issue where the enabled state of MCP tools failed to load correctly.
+- Fixed an issue where the tool permission consent dialog failed to display.
+
+**Full Changelog**: https://github.com/DearVa/Everywhere/compare/v0.5.4...v0.5.5
+
+
+
+## [v0.5.4](https://github.com/DearVa/Everywhere/releases/tag/v0.5.4) - 2025-12-20
+
+### ⚠️ Important Changes
+- Changed the software license from Apache 2.0 to **BSL 1.1**.
+
+### ✨ Features
+- 🎨 Brand New UI: 
+  - A complete refactor of the user interface, featuring a modern design, responsive layout, and a fresh chat window style with Light Mode support. The app now automatically syncs with the system accent color and includes more helpful tooltips.
+- Added support for the OpenAI Responses API.
+- Added shortcuts for quick navigation:
+  - Scroll on the assistant icon or use `Ctrl` + `0-9` keys to switch assistants.
+  - Press `Ctrl` + `H` to toggle the chat history view.
+
+### 🚀 Improvements
+- Window position and size (for both Settings and Chat) are now automatically saved and restored.
+- Improved the visual style of the element selector popup.
+- Streamlined the MCP configuration process.
+- Font size settings now correctly apply to the chat window.
+
+### 🐛 Bug Fixes
+- Fixed an issue where the element selector was offset on multi-monitor setups with different scaling factors (#17).
+- Fixed an issue where the screenshot tool could freeze (#177).
+- Fixed an issue where Anthropic API calls would fail (#198).
+- Fixed an issue where DeepSeek models encountered errors when using tools during the reasoning process (#208).
+- Fixed a potential memory leak (#207).
+
+**Full Changelog**: https://github.com/DearVa/Everywhere/compare/v0.5.3...v0.5.4
+
+
+
+## [v0.5.3](https://github.com/DearVa/Everywhere/releases/tag/v0.5.3) - 2025-12-7
+
+### ✨ Features
+- Added a debug option in settings to create a process dump.
+
+### 🚀 Improvements
+- Improved the UI display for reasoning output.
+
+**Full Changelog**: https://github.com/DearVa/Everywhere/compare/v0.5.2...v0.5.3
+
+
+
+## [v0.5.2](https://github.com/DearVa/Everywhere/releases/tag/v0.5.2) - 2025-12-3
+
+Thanks to [@AidenNovak](https://github.com/AidenNovak) for sponsoring the Apple Developer Program fee. The Mac version is in its final stages of development and will be released soon.
+
+### ✨ Features
+- Added support for the Gemini 3 Pro protocol.
+- Added the ability to export as Markdown (#180).
+- Custom assistants now support drag-and-drop sorting.
+
+### 🐛 Bug Fixes
+- Fixed an issue where Google search was not working.
+- Fixed an issue where data was lost when copying custom assistants.
+- Fixed an issue with abnormal background CPU usage.
+- Fixed an issue where Gemini could not call tools (#174).
+- Fixed an issue where the settings button in the chat window incorrectly received focus (#173).
+- Fixed an issue where rendered Markdown checkboxes were too large (#172).
+- Fixed an issue where parameter types were incorrectly converted to strings during MCP calls (#167).
+- Fixed a missing reset button in the model settings template (#149, thanks to @ChuheLin).
+
+**Full Changelog**: https://github.com/DearVa/Everywhere/compare/v0.5.1...v0.5.2
+
+
+
+## [v0.5.1](https://github.com/DearVa/Everywhere/releases/tag/v0.5.1) - 2025-11-24
+
+### ✨ Features
+- Added a digital signature to the software (Thanks to Certum).
+- Desktop notifications will now be displayed for permission consent when the chat window is hidden.
+
+### 🚀 Improvements
+- Enabled trimming optimization, reducing the application size by approximately 50%.
+- Optimized the terminal plugin.
+
+### 🐛 Bug Fixes
+- Fixed an issue where some MCP plugins continued to run in the background after the application was closed.
+- Fixed an issue where settings were sometimes not saved correctly.
+- Fixed an issue where terminal execution output was sometimes not displayed.
+- Fixed an issue where some plugin icons were not displayed.
+- Fixed an issue where the chat window could not be closed using the shortcut key.
+
+**Full Changelog**: https://github.com/DearVa/Everywhere/compare/v0.5.0...v0.5.1
+
+
+
+## [v0.5.0](https://github.com/DearVa/Everywhere/releases/tag/v0.5.0) - 2025-11-22
+
+### ✨ Features
+- 🎉 **Major Update: Added support for MCP (Model Context Protocol)!** You can now add your own MCP tools, which will be automatically enabled when called by an assistant. Supports Stdio, Streamable HTTP, and SSE protocols.
+
+### 🚀 Improvements
+- When a tool called by an assistant is not found, it now performs a fuzzy match and informs the assistant, reducing model hallucinations.
+- (Windows) Added output display for `Everything` plugin.
+- (Windows) Removed `Windows System API` plugin.
+- Other UI adjustments and bug fixes.
+
+### 🐛 Bug Fixes
+- Fixed an issue where custom assistant avatars were stretched (#155).
+- Fixed an issue where Markdown content was difficult to select and could cause errors when copying (#91).
+- Fixed an issue where bold or italic text in Markdown would revert to normal font when selected (#114).
+- Fixed a bug where capturing a UI element could not be canceled.
+
+**Full Changelog**: https://github.com/DearVa/Everywhere/compare/v0.4.7...v0.5.0
+
+
+
+## [v0.4.7](https://github.com/DearVa/Everywhere/releases/tag/v0.4.7) - 2025-11-19
+
+### ✨ Features
+- Added the ability to copy and edit sent messages. You can also hold `Shift` while clicking the copy button to get the raw message content (#70).
+- Added a setting to adjust the font size (#47).
+- Added a button to duplicate custom assistants (#150).
+- Added support for Gemini 3 Pro Preview.
+
+### 🚀 Improvements
+- Optimized window positioning and resizing behavior. The chat window now opens centered and remembers its last position. The window size is no longer reset when switching chats unless manually minimized.
+
+### 🐛 Bug Fixes
+- Fixed an issue where adding an attachment could result in an incorrect file extension.
+
+**Full Changelog**: https://github.com/DearVa/Everywhere/compare/v0.4.6...v0.4.7
+
+
+
 ## [v0.4.6](https://github.com/DearVa/Everywhere/releases/tag/v0.4.6) - 2025-11-15
 
 ### ✨ Features

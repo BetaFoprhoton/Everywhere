@@ -1,0 +1,87 @@
+﻿<ResourceDictionary
+  xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:ai="clr-namespace:Everywhere.AI" xmlns:c="clr-namespace:Everywhere.Configuration"
+  xmlns:common="clr-namespace:Everywhere.Common" xmlns:interop="clr-namespace:Everywhere.Interop"
+  xmlns:md="clr-namespace:LiveMarkdown.Avalonia;assembly=LiveMarkdown.Avalonia" xmlns:plugins="clr-namespace:Everywhere.Chat.Plugins"
+  xmlns:shadui="clr-namespace:ShadUI.Controls;assembly=ShadUI" xmlns:v="clr-namespace:Everywhere.Views">
+  <DataTemplate
+    x:Key="{x:Type ai:ModelProviderTemplate}"
+    x:DataType="ai:ModelProviderTemplate">
+    <StackPanel
+      Orientation="Horizontal" Spacing="8">
+      <shadui:ThemeToggleBlock>
+        <shadui:ThemeToggleBlock.DarkContent>
+          <ControlTemplate>
+            <Image
+              Width="{DynamicResource FontSizeXl}"
+              Height="{DynamicResource FontSizeXl}"
+              md:AsyncImageLoader.SizeToContent="Manual"
+              md:AsyncImageLoader.Source="{Binding DarkIconUrl, FallbackValue={x:Null}}"/>
+          </ControlTemplate>
+        </shadui:ThemeToggleBlock.DarkContent>
+        <shadui:ThemeToggleBlock.LightContent>
+          <ControlTemplate>
+            <Image
+              Width="{DynamicResource FontSizeXl}"
+              Height="{DynamicResource FontSizeXl}"
+              md:AsyncImageLoader.SizeToContent="Manual"
+              md:AsyncImageLoader.Source="{Binding LightIconUrl, FallbackValue={x:Null}}"/>
+          </ControlTemplate>
+        </shadui:ThemeToggleBlock.LightContent>
+      </shadui:ThemeToggleBlock>
+
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{Binding DisplayName, FallbackValue={x:Null}}"/>
+    </StackPanel>
+  </DataTemplate>
+
+  <DataTemplate
+    x:Key="{x:Type ai:ModelDefinitionTemplate}"
+    x:DataType="ai:ModelDefinitionTemplate">
+    <TextBlock Text="{Binding DisplayName, FallbackValue={x:Null}}"/>
+  </DataTemplate>
+
+  <DataTemplate x:Key="{x:Type interop:KeyboardShortcut}">
+    <DataTemplate.DataType>
+      <x:Type
+        x:TypeArguments="interop:KeyboardShortcut" TypeName="c:SettingsTemplatedItem"/>
+    </DataTemplate.DataType>
+
+    <v:KeyboardShortcutInputBox
+      MinWidth="160" MinHeight="32"
+      HorizontalAlignment="Left"
+      Shortcut="{Binding Value, Mode=TwoWay}"/>
+  </DataTemplate>
+
+  <DataTemplate x:Key="{x:Type common:ColoredIcon}">
+    <DataTemplate.DataType>
+      <x:Type
+        x:TypeArguments="common:ColoredIcon" TypeName="c:SettingsTemplatedItem"/>
+    </DataTemplate.DataType>
+
+    <Button
+      HorizontalAlignment="Left" CornerRadius="20">
+      <v:IconPresenter
+        MinWidth="40" MinHeight="40"
+        FontSize="{DynamicResource FontSize2Xl}"
+        Icon="{Binding Value}"
+        IconSize="{DynamicResource FontSize2Xl}"
+        LineHeight="{DynamicResource LineHeight2Xl}"/>
+
+      <Button.Flyout>
+        <Flyout>
+          <v:IconEditor
+            Width="360" Height="500"
+            Icon="{Binding Value, Mode=TwoWay}"/>
+        </Flyout>
+      </Button.Flyout>
+    </Button>
+  </DataTemplate>
+
+  <DataTemplate
+    x:Key="{x:Type plugins:WebSearchEngineProvider}"
+    x:DataType="plugins:WebSearchEngineProvider">
+    <TextBlock Text="{Binding DisplayName, FallbackValue={x:Null}}"/>
+  </DataTemplate>
+</ResourceDictionary>

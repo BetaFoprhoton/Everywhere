@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
@@ -68,38 +68,46 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
             sb.AppendLine();
         }
 
+        sb.AppendLine("[global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(");
+        sb.AppendLine("    global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicProperties |");
+        sb.AppendLine("    global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicConstructors");
+        sb.AppendLine(")]");
         sb.Append("partial class ").Append(type.Name).AppendLine();
         sb.AppendLine("{");
         using (sb.Indent())
         {
-            sb.AppendLine("[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
+            sb.AppendLine("[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]");
             sb.AppendLine("[global::System.Text.Json.Serialization.JsonIgnore]");
-            sb.AppendLine("public global::Everywhere.Configuration.SettingsItems SettingsItems { get; } = new();").AppendLine();
-
-            // Partial method for further customization
-            sb.AppendLine("partial void OnConstructed();").AppendLine();
+            sb.AppendLine("[field: global::System.Diagnostics.CodeAnalysis.AllowNull, global::System.Diagnostics.CodeAnalysis.MaybeNull]");
+            sb.AppendLine("public global::Everywhere.Configuration.SettingsItems SettingsItems").AppendLine("{");
 
             // Constructor
-            sb.Append("public ").Append(type.Name).AppendLine("()");
-            sb.AppendLine("{");
             using (sb.Indent())
             {
-                sb.AppendLine("OnConstructed();").AppendLine();
-
-                foreach (var meta in members)
+                sb.AppendLine("get").AppendLine("{");
+                using (sb.Indent())
                 {
-                    if (string.IsNullOrWhiteSpace(meta.HeaderKey))
+                    sb.AppendLine("if (field is not null) return field;").AppendLine();
+                    sb.AppendLine("field = new global::Everywhere.Configuration.SettingsItems();");
+
+                    foreach (var meta in members)
                     {
-                        // Report diagnostic for missing DynamicResourceKey
-                        ctx.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Diagnostics.EmptyHeaderKey,
-                                meta.Symbol.Locations.FirstOrDefault(),
-                                meta.Name));
+                        if (string.IsNullOrWhiteSpace(meta.HeaderKey))
+                        {
+                            // Report diagnostic for missing DynamicResourceKey
+                            ctx.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Diagnostics.EmptyHeaderKey,
+                                    meta.Symbol.Locations.FirstOrDefault(),
+                                    meta.Name));
+                        }
+
+                        EmitItemRecursive(ctx, sb, meta, $"item_{meta.Name.Replace(".", "_")}", meta.Name, "field");
                     }
 
-                    EmitItemRecursive(ctx, sb, meta, $"item_{meta.Name.Replace(".", "_")}", meta.Name, "SettingsItems");
+                    sb.AppendLine("return field;");
                 }
+                sb.AppendLine("}");
             }
             sb.AppendLine("}");
         }
@@ -324,6 +332,26 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
                 sb.AppendLine($"var {itemName} = new global::Everywhere.Configuration.SettingsControlItem(control_{itemName}_factory);");
                 break;
             }
+            case ItemKind.Templated:
+            {
+                if (metadata.AttributeOwner.GetAttribute(KnownAttributes.SettingsTemplatedItem) is not { } attribute)
+                {
+                    // This case should ideally not be hit if Classify is correct
+                    return;
+                }
+
+                var dataTemplateKeyExpr = attribute.GetNamedArgument("DataTemplateKey") switch
+                {
+                    { Kind: TypedConstantKind.Type, Value: INamedTypeSymbol typeSymbol } =>
+                        $"typeof({typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)})",
+                    { IsNull: false, Value: string str } => str,
+                    _ => null
+                };
+                dataTemplateKeyExpr ??= $"typeof({metadata.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)})";
+
+                sb.AppendLine($"var {itemName} = global::Everywhere.Configuration.SettingsTemplatedItem.Create({dataTemplateKeyExpr});");
+                break;
+            }
             default:
             {
                 // Generate the 'new' expression for the specific SettingsItem type
@@ -335,19 +363,40 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
                     ItemKind.Int => "new global::Everywhere.Configuration.SettingsIntegerItem()",
                     ItemKind.Double => "new global::Everywhere.Configuration.SettingsDoubleItem()",
                     ItemKind.Enum => "new global::Everywhere.Configuration.SettingsSelectionItem()",
-                    _ =>
-                        $"global::Everywhere.Configuration.SettingsTypedItem.Create(typeof({metadata.Type.ToDisplayString(NullableFlowState.NotNull)}))"
+                    _ => null
                 };
+
+                if (newExpr is null)
+                {
+                    if (metadata.AttributeOwner.HasAttribute(KnownAttributes.SettingsItems))
+                    {
+                        // It's a group item
+                        newExpr = "new global::Everywhere.Configuration.EmptySettingsTemplatedItem()";
+                    }
+                    else
+                    {
+                        // Report diagnostic for unsupported type, use TemplatedItem as fallback
+                        ctx.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Diagnostics.UnsupportedSettingsItemType,
+                                metadata.Symbol.Locations.FirstOrDefault(),
+                                metadata.Name,
+                                metadata.Type.ToDisplayString()));
+                        newExpr =
+                            $"global::Everywhere.Configuration.SettingsTemplatedItem.Create(typeof({metadata.Type.ToDisplayString(NullableFlowState.NotNull)}))";
+                    }
+                }
+
                 sb.Append("var ").Append(itemName).Append(" = ").Append(newExpr).AppendLine(";");
                 break;
             }
         }
 
-        // Apply common properties (Header, Description, Value, etc.)
-        ApplyCommonMetadata(sb, itemName, metadata);
+        // Apply header and description
+        ApplyHeaderAndDescription(sb, itemName, metadata);
 
         // Apply IsEnabled/IsVisible bindings
-        ApplyItemBindings(sb, itemName, metadata);
+        ApplySettingsItemAttributes(sb, itemName, metadata);
 
         // Apply type-specific properties from attributes (e.g., MaxLength)
         ApplyTypeSpecificMetadata(sb, itemName, metadata);
@@ -358,6 +407,28 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
         sb.Append($"{itemName}[!global::Everywhere.Configuration.SettingsItem.ValueProperty] = ");
         EmitBinding(sb, bindingPath, BindingMode.TwoWay).AppendLine(";");
 
+        // Check if the item has [DefaultValue] attribute. If so, wrap it in a SettingsCustomizableItem to enable the Reset button.
+        if (metadata.Kind != ItemKind.Customizable &&
+            metadata.AttributeOwner.GetAttribute("System.ComponentModel.DefaultValueAttribute") is { ConstructorArguments: [var defaultValue, ..] })
+        {
+            var defaultValueLiteral = ToLiteral(defaultValue.Value);
+            var wrapperItemName = $"{itemName}_wrapper";
+
+            sb.AppendLine($"var {wrapperItemName} = new global::Everywhere.Configuration.SettingsCustomizableItem({itemName});");
+            sb.AppendLine($"{wrapperItemName}.ResetCommand = new global::CommunityToolkit.Mvvm.Input.RelayCommand(() =>");
+            sb.AppendLine("{");
+            using (sb.Indent())
+            {
+                sb.AppendLine($"this.{bindingPath} = {defaultValueLiteral};");
+            }
+            sb.AppendLine("});");
+
+            ApplyHeaderAndDescription(sb, wrapperItemName, metadata);
+
+            // Replace itemName with the wrapper
+            itemName = wrapperItemName;
+        }
+
         // Add the generated item to its parent collection
         if (!string.IsNullOrEmpty(parentCollection))
         {
@@ -365,7 +436,7 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
         }
     }
 
-    private static void ApplyCommonMetadata(IndentedStringBuilder sb, string itemName, in PropertyMetadata metadata)
+    private static void ApplyHeaderAndDescription(IndentedStringBuilder sb, string itemName, in PropertyMetadata metadata)
     {
         var headerExpr = string.IsNullOrWhiteSpace(metadata.HeaderKey) ?
             "null" :
@@ -417,6 +488,7 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
                     $"{itemName}.TextWrapping = {GetNamedArgValue(attribute, "IsMultiline", false, "global::Avalonia.Media.TextWrapping.Wrap", "global::Avalonia.Media.TextWrapping.NoWrap")};");
                 sb.AppendLine($"{itemName}.PasswordChar = {GetNamedArgValue(attribute, "IsPassword", false, "'*'", "'\\0'")};");
                 sb.AppendLine($"{itemName}.Height = {GetNamedArgValue(attribute, "Height", "double.NaN")};");
+                sb.AppendLine($"{itemName}.MinWidth = {GetNamedArgValue(attribute, "MinWidth", "320d")};");
                 break;
             }
             case ItemKind.Int when metadata.AttributeOwner.GetAttribute(KnownAttributes.SettingsIntegerItem) is { } attribute:
@@ -424,6 +496,7 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
                 sb.AppendLine($"{itemName}.MinValue = {GetNamedArgValue(attribute, "Min", "int.MinValue")};");
                 sb.AppendLine($"{itemName}.MaxValue = {GetNamedArgValue(attribute, "Max", "int.MaxValue")};");
                 sb.AppendLine($"{itemName}.IsSliderVisible = {GetNamedArgValue(attribute, "IsSliderVisible", "true")};");
+                sb.AppendLine($"{itemName}.IsTextBoxVisible = {GetNamedArgValue(attribute, "IsTextBoxVisible", "true")};");
                 break;
             }
             case ItemKind.Double when metadata.AttributeOwner.GetAttribute(KnownAttributes.SettingsDoubleItem) is { } attribute:
@@ -432,6 +505,7 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
                 sb.AppendLine($"{itemName}.MaxValue = {GetNamedArgValue(attribute, "Max", "double.PositiveInfinity")};");
                 sb.AppendLine($"{itemName}.Step = {GetNamedArgValue(attribute, "Step", "0.1d")};");
                 sb.AppendLine($"{itemName}.IsSliderVisible = {GetNamedArgValue(attribute, "IsSliderVisible", "true")};");
+                sb.AppendLine($"{itemName}.IsTextBoxVisible = {GetNamedArgValue(attribute, "IsTextBoxVisible", "true")};");
                 break;
             }
             case ItemKind.Enum:
@@ -450,7 +524,6 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
                     foreach (var member in enumMembers)
                     {
                         var memberAccess = $"{enumTypeStr}.{member.Name}";
-
                         // Check for [DynamicResourceKey] on the enum member
                         string? headerKey = null;
                         if (member.GetAttribute(KnownAttributes.DynamicResourceKey) is { } attr)
@@ -470,7 +543,7 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
 
                         var resourceKeyExpr = headerKey is not null ?
                             $"new global::Everywhere.I18N.DynamicResourceKey({headerKey})" :
-                            $"new global::Everywhere.I18N.DirectResourceKey(\"{metadata.Type.Name}_{member.Name}\")";
+                            $"new global::Everywhere.I18N.DynamicResourceKey(\"{metadata.Type.Name}_{member.Name}\")";
 
                         sb.AppendLine($"new global::Everywhere.Configuration.SettingsSelectionItem.Item({resourceKeyExpr}, {memberAccess}, null),");
                     }
@@ -481,12 +554,20 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
         }
     }
 
-    private static void ApplyItemBindings(
+    private static void ApplySettingsItemAttributes(
         IndentedStringBuilder sb,
         string itemName,
         in PropertyMetadata metadata)
     {
         if (metadata.AttributeOwner.GetAttribute(KnownAttributes.SettingsItem) is not { } settingsItemAttribute) return;
+
+        if (settingsItemAttribute.GetNamedArgument("Classes") is { IsNull: false, Values: { Length: > 0 } classesArray })
+        {
+            var classes = classesArray
+                .Where(c => c.Value is string)
+                .Select(c => $"\"{c.Value!.ToString()!.Replace("\"", "\\\"")}\"");
+            sb.AppendLine($"{itemName}.Classes.AddRange(new string[] {{ {string.Join(", ", classes)} }});");
+        }
 
         if (settingsItemAttribute.GetNamedArgument("IsEnabledBindingPath") is { IsNull: false, Value: string isEnabledBindingPath })
         {
@@ -706,9 +787,14 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
 
     private static ItemKind Classify(ISymbol symbol, ITypeSymbol type)
     {
-        if (symbol.GetAttribute(KnownAttributes.SettingsSelectionItem) is not null)
+        if (symbol.HasAttribute(KnownAttributes.SettingsSelectionItem))
         {
             return ItemKind.Selection;
+        }
+
+        if (symbol.HasAttribute(KnownAttributes.SettingsTemplatedItem))
+        {
+            return ItemKind.Templated;
         }
 
         if (type.AllInterfaces.Any(i => i.ToDisplayString() == "Everywhere.Configuration.ISettingsControl"))
@@ -836,6 +922,7 @@ public sealed class SettingsItemsSourceGenerator : IIncrementalGenerator
         Double,
         Customizable,
         Enum,
+        Templated,
         SettingsControl,
         Unknown
     }

@@ -3,25 +3,26 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <MicrosoftPackageVersion>10.0.0</MicrosoftPackageVersion>
     <EntityFrameworkVersion>10.0.0</EntityFrameworkVersion>
-    <SemanticKernelVersion>1.67.1</SemanticKernelVersion>
+    <SemanticKernelVersion>1.68.0</SemanticKernelVersion>
     <OpenTelemetryVersion>1.14.0</OpenTelemetryVersion>
     <SentryVersion>5.16.2</SentryVersion>
-    <AvaloniaVersion>11.3.8</AvaloniaVersion>
-    <LiveMarkdownVersion>1.4.0</LiveMarkdownVersion>
+    <AvaloniaVersion>11.3.10</AvaloniaVersion>
+    <LiveMarkdownVersion>1.6.1</LiveMarkdownVersion>
     <SkiaSharpVersion>3.119.1</SkiaSharpVersion>
-    <XamlBehaviorsVersion>11.3.8.2</XamlBehaviorsVersion>
+    <XamlBehaviorsVersion>11.3.9</XamlBehaviorsVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- Base packages -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageVersion Include="DynamicData" Version="9.4.1" />
+    <PackageVersion Include="FuzzySharp" Version="2.0.2" />
     <PackageVersion Include="Google.Protobuf" Version="3.30.2" />
     <PackageVersion Include="Grpc.Core.Api" Version="2.71.0" />
     <PackageVersion Include="Grpc.Tools" Version="2.71.0" />
     <PackageVersion Include="JetBrains.Profiler.Api" Version="1.4.10" />
+    <PackageVersion Include="Lib.Harmony" Version="2.4.2" />
     <PackageVersion Include="LiveMarkdown.Avalonia" Version="$(LiveMarkdownVersion)" />
     <PackageVersion Include="LiveMarkdown.Avalonia.Math" Version="$(LiveMarkdownVersion)" />
-    <PackageVersion Include="MessageBox.Avalonia" Version="3.3.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkVersion)" />
@@ -30,6 +31,9 @@
     <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="$(MicrosoftPackageVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftPackageVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="$(MicrosoftPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(MicrosoftPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftPackageVersion)" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Core" Version="1.68.0" />
     <PackageVersion Include="Nito.AsyncEx" Version="5.1.2" />
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryVersion)" />
@@ -38,23 +42,20 @@
     <PackageVersion Include="Sentry.OpenTelemetry" Version="$(SentryVersion)" />
     <PackageVersion Include="Sentry.Serilog" Version="$(SentryVersion)" />
     <PackageVersion Include="Serilog" Version="4.3.0" />
-    <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.2" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageVersion Include="System.Drawing.Common" Version="$(MicrosoftPackageVersion)" />
-    <PackageVersion Include="System.Linq.Async" Version="6.0.3" />
     <PackageVersion Include="System.Text.Json" Version="$(MicrosoftPackageVersion)" />
     <PackageVersion Include="ZLinq" Version="1.5.4" />
     <!-- AI packages -->
-    <PackageVersion Include="Anthropic.SDK" Version="5.7.1" />
+    <PackageVersion Include="Anthropic.SDK" Version="5.8.0" />
     <PackageVersion Include="Microsoft.ML.OnnxRuntime" Version="1.22.0" />
     <PackageVersion Include="Microsoft.SemanticKernel" Version="$(SemanticKernelVersion)" />
     <PackageVersion Include="Microsoft.SemanticKernel.Abstractions" Version="$(SemanticKernelVersion)" />
     <PackageVersion Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="$(SemanticKernelVersion)-alpha" />
-    <PackageVersion Include="Microsoft.SemanticKernel.Connectors.Google" Version="$(SemanticKernelVersion)-alpha" />
     <PackageVersion Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="$(SemanticKernelVersion)" />
-    <PackageVersion Include="Microsoft.SemanticKernel.Plugins.Web" Version="$(SemanticKernelVersion)-alpha" />
-    <PackageVersion Include="ModelContextProtocol" Version="0.3.0-preview.3" />
+    <PackageVersion Include="ModelContextProtocol" Version="0.4.0-preview.3" />
     <PackageVersion Include="PuppeteerSharp" Version="20.2.4" />
     <PackageVersion Include="Tavily" Version="1.0.0" />
     <!-- Avalonia packages -->
@@ -79,10 +80,9 @@
     <PackageVersion Include="SkiaSharp.NativeAssets.macOS" Version="$(SkiaSharpVersion)" />
     <PackageVersion Include="SkiaSharp.NativeAssets.Win32" Version="$(SkiaSharpVersion)" />
     <PackageVersion Include="Xaml.Behaviors.Avalonia" Version="$(XamlBehaviorsVersion)" />
-    <PackageVersion Include="Xaml.Behaviors.Interactivity" Version="$(XamlBehaviorsVersion)" />
     <!-- Windows packages -->
     <PackageVersion Include="Microsoft.PowerShell.SDK" Version="7.5.4" />
-    <PackageVersion Include="Microsoft.Windows.CsWin32" Version="0.3.248">
+    <PackageVersion Include="Microsoft.Windows.CsWin32" Version="0.3.257">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>

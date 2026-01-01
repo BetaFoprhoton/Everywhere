@@ -1,0 +1,285 @@
+﻿using Avalonia.Media.Imaging;
+
+namespace Everywhere.Interop;
+
+public enum VisualElementType
+{
+    Unknown,
+    Label,
+    TextEdit,
+    Document,
+    Button,
+    Hyperlink,
+    Image,
+    CheckBox,
+    RadioButton,
+    ComboBox,
+    ListView,
+    ListViewItem,
+    TreeView,
+    TreeViewItem,
+    DataGrid,
+    DataGridItem,
+    TabControl,
+    TabItem,
+    Table,
+    TableRow,
+    Menu,
+    MenuItem,
+    Slider,
+    ScrollBar,
+    ProgressBar,
+    Spinner,
+
+    ToolBar,
+    StatusBar,
+
+    Header,
+    HeaderItem,
+
+    Splitter,
+
+    /// <summary>
+    /// The most generic container element, its parent and children can be any type.
+    /// </summary>
+    Panel,
+
+    /// <summary>
+    /// The toplevel of a window, it's parent must be Screen or null
+    /// </summary>
+    TopLevel,
+
+    /// <summary>
+    /// A screen that contains toplevel, its parent is always null and children are toplevel.
+    /// </summary>
+    Screen
+}
+
+[Flags]
+public enum VisualElementStates
+{
+    None = 0,
+    Offscreen = 1 << 0,
+    Disabled = 1 << 1,
+    Focused = 1 << 2,
+    Selected = 1 << 3,
+    ReadOnly = 1 << 4,
+    Password = 1 << 5,
+}
+
+/// <summary>
+/// Accessor to navigate siblings of a visual element.
+/// It manages enumeration of sibling elements in both forward and backward directions,
+/// and Dispose all resources when enumerator is disposed.
+/// </summary>
+public abstract class VisualElementSiblingAccessor : IDisposable
+{
+    private int _activeEnumerators;
+    private bool _disposed;
+
+    /// <summary>
+    /// Gets a forward enumerator for iterating next sibling elements.
+    /// </summary>
+    public IEnumerator<IVisualElement> ForwardEnumerator
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(_disposed, GetType());
+
+            EnsureResources();
+            Interlocked.Increment(ref _activeEnumerators);
+            return new ManagedEnumerator(this, CreateForwardEnumerator());
+        }
+    }
+
+    /// <summary>
+    /// Gets a backward enumerator for iterating previous sibling elements.
+    /// </summary>
+    public IEnumerator<IVisualElement> BackwardEnumerator
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(_disposed, GetType());
+
+            EnsureResources();
+            Interlocked.Increment(ref _activeEnumerators);
+            return new ManagedEnumerator(this, CreateBackwardEnumerator());
+        }
+    }
+
+    /// <summary>
+    /// Creates an enumerator for iterating over sibling elements in the forward direction.
+    /// </summary>
+    /// <returns></returns>
+    protected abstract IEnumerator<IVisualElement> CreateForwardEnumerator();
+
+    /// <summary>
+    /// Creates an enumerator for iterating over sibling elements in the backward direction.
+    /// </summary>
+    /// <returns></returns>
+    protected abstract IEnumerator<IVisualElement> CreateBackwardEnumerator();
+
+    /// <summary>
+    /// Ensures that necessary resources are allocated for sibling enumeration.
+    /// </summary>
+    protected virtual void EnsureResources() { }
+
+    /// <summary>
+    /// Releases any allocated resources used for sibling enumeration.
+    /// </summary>
+    protected virtual void ReleaseResources() { }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        ReleaseResources();
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Called when an enumerator is disposed to manage resource cleanup.
+    /// </summary>
+    private void EnumeratorDisposed()
+    {
+        if (Interlocked.Decrement(ref _activeEnumerators) == 0 && _disposed)
+        {
+            ReleaseResources();
+        }
+    }
+
+    /// <summary>
+    /// Wrapper class to manage enumerator disposal and notify the owner.
+    /// </summary>
+    /// <param name="owner"></param>
+    /// <param name="innerEnumerator"></param>
+    private class ManagedEnumerator(VisualElementSiblingAccessor owner, IEnumerator<IVisualElement> innerEnumerator) : IEnumerator<IVisualElement>
+    {
+        public IVisualElement Current => innerEnumerator.Current;
+
+        object IEnumerator.Current => Current;
+
+        public bool MoveNext() => innerEnumerator.MoveNext();
+
+        public void Reset() => innerEnumerator.Reset();
+
+        public void Dispose()
+        {
+            owner.EnumeratorDisposed();
+            innerEnumerator.Dispose();
+        }
+    }
+}
+
+public interface IVisualElement
+{
+    /// <summary>
+    /// Unique identifier in one Visual Tree.
+    /// </summary>
+    string Id { get; }
+
+    /// <summary>
+    /// Gets the visual parent, returns null if not found
+    /// </summary>
+    IVisualElement? Parent { get; }
+
+    /// <summary>
+    /// Gets an accessor that can enumerate siblings
+    /// If this supports direct sibling accessing (e.g. Windows use a linked-array), enumerate it directly.
+    /// If this doesn't support (e.g. macOS and Linux), get parent and cache children here
+    /// </summary>
+    VisualElementSiblingAccessor SiblingAccessor { get; }
+
+    /// <summary>
+    /// Gets the visual children, return empty if empty
+    /// </summary>
+    IEnumerable<IVisualElement> Children { get; }
+
+    VisualElementType Type { get; }
+
+    VisualElementStates States { get; }
+
+    string? Name { get; }
+
+    /// <summary>
+    /// Relative to the screen pixels, regardless of the parent element.
+    /// </summary>
+    PixelRect BoundingRectangle { get; }
+
+    int ProcessId { get; }
+
+    nint NativeWindowHandle { get; }
+
+    /// <summary>
+    /// get text content of the visual element.
+    /// </summary>
+    /// <param name="maxLength">allowed max length of the text, -1 means no limit.</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// set maxLength to 1 can check if the text is null or empty, with minimal performance impact.
+    /// </remarks>
+    string? GetText(int maxLength = -1);
+
+    /// <summary>
+    /// Get the selected text of the visual element.
+    /// </summary>
+    /// <returns></returns>
+    string? GetSelectionText();
+
+    /// <summary>
+    /// Invokes the default action on the visual element using UI Automation patterns.
+    /// </summary>
+    void Invoke();
+
+    /// <summary>
+    /// Sets the textual content of the visual element using UI Automation patterns.
+    /// </summary>
+    void SetText(string text);
+
+    /// <summary>
+    /// Sends virtual key input to the visual element using UI Automation patterns.
+    /// Supports common keys and shortcuts like Enter, Ctrl+C, or Ctrl+V even when the window is minimized.
+    /// </summary>
+    void SendShortcut(KeyboardShortcut shortcut);
+
+    // /// <summary>
+    // /// Get the selected text of the visual element.
+    // /// </summary>
+    // /// <returns></returns>
+    // string? GetSelectionText();
+
+    Task<Bitmap> CaptureAsync(CancellationToken cancellationToken);
+}
+
+public static class VisualElementExtension
+{
+    extension(IVisualElement element)
+    {
+        public IEnumerable<IVisualElement> GetDescendants(bool includeSelf = false)
+        {
+            if (includeSelf)
+            {
+                yield return element;
+            }
+
+            foreach (var child in element.Children)
+            {
+                yield return child;
+                foreach (var descendant in child.GetDescendants())
+                {
+                    yield return descendant;
+                }
+            }
+        }
+
+        public IEnumerable<IVisualElement> GetAncestors(bool includeSelf = false)
+        {
+            var current = includeSelf ? element : element.Parent;
+            while (current != null)
+            {
+                yield return current;
+                current = current.Parent;
+            }
+        }
+    }
+}

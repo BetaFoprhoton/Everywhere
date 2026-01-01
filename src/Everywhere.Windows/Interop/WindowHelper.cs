@@ -145,6 +145,7 @@ public class WindowHelper : IWindowHelper
             // Then hide our HWND, to make sure that the OS gives the FG / focus back to another app
             // (there's no way for us to guess what the right hwnd might be, only the OS can do it right)
             PInvoke.ShowWindow(hWnd, SHOW_WINDOW_CMD.SW_HIDE);
+            window.Hide();
         }
         else
         {
@@ -170,7 +171,7 @@ public class WindowHelper : IWindowHelper
 
             PInvoke.SetForegroundWindow(hWnd);
             PInvoke.SetActiveWindow(hWnd);
-            PInvoke.SetFocus(hWnd);
+            window.Focus();
 
             // Push our window to the top of the Z-order and make it the topmost, so that it appears above all other windows.
             // We want to remove the topmost status when we hide the window (because we cloak it instead of hiding it).

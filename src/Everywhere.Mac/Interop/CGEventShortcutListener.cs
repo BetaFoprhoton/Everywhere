@@ -1,5 +1,8 @@
-﻿using Avalonia.Input;
+﻿using System.Reactive.Disposables;
+using Avalonia.Input;
 using CoreFoundation;
+using Everywhere.Common;
+using Everywhere.I18N;
 using Everywhere.Interop;
 using Everywhere.Utilities;
 using Microsoft.Extensions.Logging;
@@ -28,11 +31,7 @@ public sealed class CGEventShortcutListener : IShortcutListener, IDisposable
         _logger = logger;
 
         // It's crucial to check for permissions before attempting to create the tap.
-        if (!PermissionHelper.IsAccessibilityTrusted())
-        {
-            logger.LogError("Accessibility permissions are not granted. Cannot create global shortcut listener.");
-            return;
-        }
+        PermissionHelper.EnsureAccessibilityTrusted();
 
         var workerThread = new Thread(RunLoopThread)
         {
@@ -84,7 +83,7 @@ public sealed class CGEventShortcutListener : IShortcutListener, IDisposable
             return cgEventRef;
         }
 
-        var cgEvent = InteropHelper.CGEventFromHandle(cgEventRef);
+        var cgEvent = CoreFoundationInterop.CGEventFromHandle(cgEventRef);
         switch (type)
         {
             case CGEventType.KeyDown:
@@ -130,7 +129,7 @@ public sealed class CGEventShortcutListener : IShortcutListener, IDisposable
 
             if (_keyboardHandlers.TryGetValue(shortcut, out var registeredHandlers))
             {
-                handlers = new List<Action>(registeredHandlers);
+                handlers = [.. registeredHandlers];
             }
         }
 
@@ -197,7 +196,7 @@ public sealed class CGEventShortcutListener : IShortcutListener, IDisposable
         }
 
         handlers.Add(handler);
-        return new AnonymousDisposable(() =>
+        return Disposable.Create(() =>
         {
             using var _ = _syncLock.EnterScope();
             if (_keyboardHandlers.TryGetValue(shortcut, out var existingHandlers))
