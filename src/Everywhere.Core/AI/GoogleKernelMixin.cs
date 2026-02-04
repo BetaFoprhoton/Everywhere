@@ -21,7 +21,7 @@ public sealed class GoogleKernelMixin : KernelMixinBase
     {
         var service = new GoogleAIGeminiChatCompletionService(
             ModelId,
-            ApiKey ?? string.Empty,
+            EnsureApiKey(),
             httpClient: httpClient,
             loggerFactory: loggerFactory,
             customEndpoint: new Uri(Endpoint, UriKind.Absolute));
@@ -29,11 +29,15 @@ public sealed class GoogleKernelMixin : KernelMixinBase
         ChatCompletionService = new OptimizedGeminiChatCompletionService(service);
     }
 
-    public override PromptExecutionSettings GetPromptExecutionSettings(FunctionChoiceBehavior? functionChoiceBehavior = null)
+    public override bool IsPersistentMessageMetadataKey(string key) => key is "thoughtSignature";
+
+    public override PromptExecutionSettings GetPromptExecutionSettings(
+        FunctionChoiceBehavior? functionChoiceBehavior = null,
+        ReasoningEffortLevel reasoningEffortLevel = ReasoningEffortLevel.Default)
     {
         double? temperature = _customAssistant.Temperature.IsCustomValueSet ? _customAssistant.Temperature.ActualValue : null;
         double? topP = _customAssistant.TopP.IsCustomValueSet ? _customAssistant.TopP.ActualValue : null;
-        int? maxTokens = _customAssistant.MaxTokens.IsCustomValueSet ? _customAssistant.MaxTokens.ActualValue : null;
+        int? maxTokens = _customAssistant.MaxTokens <= 0 ? null : _customAssistant.MaxTokens;
 
         // Convert FunctionChoiceBehavior to GeminiToolCallBehavior
         GeminiToolCallBehavior? toolCallBehavior = null;
@@ -48,12 +52,42 @@ public sealed class GoogleKernelMixin : KernelMixinBase
             TopP = topP,
             MaxTokens = maxTokens,
             ToolCallBehavior = toolCallBehavior,
-            ThinkingConfig = IsDeepThinkingSupported ? new GeminiThinkingConfig
-            {
-                ThinkingBudget = -1,
-                IncludeThoughts = true
-            } : null
+            ThinkingConfig = GetThinkingConfig()
         };
+
+        // https://ai.google.dev/gemini-api/docs/thinking
+        GeminiThinkingConfig? GetThinkingConfig()
+        {
+            if (!IsDeepThinkingSupported) return null;
+
+            var thinkingConfig = new GeminiThinkingConfig
+            {
+                IncludeThoughts = true
+            };
+
+            var isGemini3Model = ModelId.Contains("gemini-3", StringComparison.OrdinalIgnoreCase);
+            if (!isGemini3Model)
+            {
+                thinkingConfig.ThinkingBudget = reasoningEffortLevel switch
+                {
+                    ReasoningEffortLevel.Minimal when ModelId.Contains("pro") => 128,
+                    ReasoningEffortLevel.Minimal => 0,
+                    ReasoningEffortLevel.Detailed when ModelId.Contains("pro") => 32768,
+                    ReasoningEffortLevel.Detailed => 24576,
+                    _ => null
+                };
+                return thinkingConfig;
+            }
+
+            thinkingConfig.ThinkingLevel = reasoningEffortLevel switch
+            {
+                ReasoningEffortLevel.Minimal when ModelId.Contains("pro") => "low",
+                ReasoningEffortLevel.Minimal => "minimal",
+                ReasoningEffortLevel.Detailed => "high",
+                _ => null
+            };
+            return thinkingConfig;
+        }
     }
 
     /// <summary>

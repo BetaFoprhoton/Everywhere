@@ -1,17 +1,11 @@
-﻿using System.Collections.Immutable;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.ObjectModel;
 using System.Reactive.Disposables;
 using System.Text;
 using System.Text.Json.Serialization;
-using Avalonia.Controls.Documents;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
 using Everywhere.Chat.Plugins;
 using Everywhere.Common;
-using Everywhere.Serialization;
-using LiveMarkdown.Avalonia;
 using Lucide.Avalonia;
 using MessagePack;
 using Microsoft.SemanticKernel;
@@ -36,7 +30,7 @@ public abstract partial class ChatMessage : ObservableObject
     public partial bool IsBusy { get; set; }
 }
 
-public interface IChatMessageWithAttachments
+public interface IHaveChatAttachments
 {
     IEnumerable<ChatAttachment> Attachments { get; }
 }
@@ -54,7 +48,10 @@ public partial class SystemChatMessage(string systemPrompt) : ChatMessage
 }
 
 [MessagePackObject(OnlyIncludeKeyedMembers = true, AllowPrivate = true)]
-public sealed partial class AssistantChatMessage : ChatMessage, IReadOnlyList<AssistantChatMessageSpan>, IDisposable
+public sealed partial class AssistantChatMessage :
+    ChatMessage,
+    IHaveChatAttachments,
+    ISourceList<AssistantChatMessageSpan>
 {
     public override AuthorRole Role => AuthorRole.Assistant;
 
@@ -64,7 +61,10 @@ public sealed partial class AssistantChatMessage : ChatMessage, IReadOnlyList<As
         get => null; // for forward compatibility
         init
         {
-            if (!value.IsNullOrEmpty()) EnsureInitialSpan().MarkdownBuilder.Append(value);
+            if (!value.IsNullOrEmpty())
+            {
+                _spansSource.Edit(list => list.Add(new AssistantChatMessageTextSpan(value)));
+            }
         }
     }
 
@@ -92,19 +92,58 @@ public sealed partial class AssistantChatMessage : ChatMessage, IReadOnlyList<As
         get => null; // for forward compatibility
         init
         {
-            if (value is { Count: > 0 }) EnsureInitialSpan().FunctionCalls.AddRange(value);
+            if (value is { Count: > 0 })
+            {
+                _spansSource.Edit(list => list.Add(new AssistantChatMessageFunctionCallSpan(value)));
+            }
         }
     }
 
     [Key(5)]
-    private IEnumerable<AssistantChatMessageSpan> SerializableSpans
+    [Obsolete]
+    private IEnumerable<LegacyAssistantChatMessageSpan>? LegacySerializableSpans
     {
-        get => _spansSource.Items;
-        set => _spansSource.Edit(list =>
+        get => null; // For forward compatibility
+        init
         {
-            list.Clear();
-            list.AddRange(value);
-        });
+            if (value is null) return;
+            _spansSource.Edit(list =>
+            {
+                list.Clear();
+                foreach (var legacySpan in value)
+                {
+                    if (legacySpan.ReasoningOutput is { Length: > 0 } reasoningOutput)
+                    {
+                        list.Add(
+                            new AssistantChatMessageReasoningSpan(reasoningOutput)
+                            {
+                                CreatedAt = legacySpan.CreatedAt,
+                                FinishedAt = legacySpan.ReasoningFinishedAt ?? legacySpan.FinishedAt
+                            });
+                    }
+
+                    if (legacySpan.FunctionCalls is { Count: > 0 } functionCalls)
+                    {
+                        list.Add(
+                            new AssistantChatMessageFunctionCallSpan(functionCalls)
+                            {
+                                CreatedAt = legacySpan.CreatedAt,
+                                FinishedAt = legacySpan.FinishedAt
+                            });
+                    }
+
+                    if (legacySpan.Content is { Length: > 0 } content)
+                    {
+                        list.Add(
+                            new AssistantChatMessageTextSpan(content)
+                            {
+                                CreatedAt = legacySpan.CreatedAt,
+                                FinishedAt = legacySpan.FinishedAt
+                            });
+                    }
+                }
+            });
+        }
     }
 
     /// <summary>
@@ -113,23 +152,31 @@ public sealed partial class AssistantChatMessage : ChatMessage, IReadOnlyList<As
     [IgnoreMember]
     public ReadOnlyObservableCollection<AssistantChatMessageSpan> Spans { get; }
 
-    [Key(6)]
+    [Key(9)]
     [ObservableProperty]
-    public partial long InputTokenCount { get; set; }
+    public partial MetadataDictionary? Metadata { get; set; }
 
-    [Key(7)]
-    [ObservableProperty]
-    public partial long OutputTokenCount { get; set; }
+    [Key(10)]
+    private IEnumerable<AssistantChatMessageSpan>? SerializableSpans
+    {
+        get => _spansSource.Items;
+        set
+        {
+            if (value is null) return;
+            _spansSource.Edit(list =>
+            {
+                list.Clear();
+                list.AddRange(value);
+            });
+        }
+    }
 
-    [Key(8)]
+    [Key(11)]
     [ObservableProperty]
-    public partial double TotalTokenCount { get; set; }
+    public partial ChatUsageDetails UsageDetails { get; private set; } = new();
 
     [IgnoreMember]
-    public int Count => _spansSource.Items.Count;
-
-    [IgnoreMember]
-    public AssistantChatMessageSpan this[int index] => _spansSource.Items[index];
+    public IEnumerable<ChatAttachment> Attachments => _spansSource.Items.OfType<IHaveChatAttachments>().SelectMany(s => s.Attachments);
 
     /// <summary>
     /// The private source for function calls.
@@ -146,39 +193,20 @@ public sealed partial class AssistantChatMessage : ChatMessage, IReadOnlyList<As
             .BindEx(out _spansConnection);
     }
 
-    private AssistantChatMessageSpan EnsureInitialSpan()
-    {
-        _spansSource.Edit(list =>
-        {
-            if (list.Count == 0) list.Add(new AssistantChatMessageSpan());
-        });
-        return _spansSource.Items[^1];
-    }
-
     public void AddSpan(AssistantChatMessageSpan span)
     {
         _spansSource.Add(span);
     }
 
-    public IEnumerator<AssistantChatMessageSpan> GetEnumerator()
-    {
-        return _spansSource.Items.GetEnumerator();
-    }
-
     public override string ToString()
     {
         var builder = new StringBuilder();
-        foreach (var span in Spans.AsValueEnumerable().Where(s => s.MarkdownBuilder.Length > 0))
+        foreach (var span in Items.AsValueEnumerable().OfType<AssistantChatMessageTextSpan>().Where(s => s.ContentMarkdownBuilder.Length > 0))
         {
-            builder.AppendLine(span.MarkdownBuilder.ToString());
+            builder.AppendLine(span.ContentMarkdownBuilder.ToString());
         }
 
         return builder.TrimEnd().ToString();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return ((IEnumerable)_spansSource.Items).GetEnumerator();
     }
 
     public void Dispose()
@@ -186,160 +214,52 @@ public sealed partial class AssistantChatMessage : ChatMessage, IReadOnlyList<As
         _spansSource.Dispose();
         _spansConnection.Dispose();
     }
-}
 
-/// <summary>
-/// Represents a span of content in an assistant chat message.
-/// A span can contain markdown content and associated function calls.
-/// </summary>
-[MessagePackObject(AllowPrivate = true, OnlyIncludeKeyedMembers = true)]
-public sealed partial class AssistantChatMessageSpan : ObservableObject, IDisposable
-{
-    [IgnoreMember]
-    public ObservableStringBuilder MarkdownBuilder { get; }
+    #region ISourceList<AssistantChatMessageSpan> Implementation
 
-    [Key(0)]
-    public string Content
+    public int Count => _spansSource.Count;
+    public IObservable<int> CountChanged => _spansSource.CountChanged;
+    public IReadOnlyList<AssistantChatMessageSpan> Items => _spansSource.Items;
+
+    public IObservable<IChangeSet<AssistantChatMessageSpan>> Connect(Func<AssistantChatMessageSpan, bool>? predicate = null)
     {
-        get => MarkdownBuilder.ToString();
-        init => MarkdownBuilder.Append(value);
+        return _spansSource.Connect(predicate);
     }
 
-    [Key(1)]
-    private IEnumerable<FunctionCallChatMessage> SerializableFunctionCalls
+    public IObservable<IChangeSet<AssistantChatMessageSpan>> Preview(Func<AssistantChatMessageSpan, bool>? predicate = null)
     {
-        get => _functionCallsSource.Items;
-        set => _functionCallsSource.Edit(list =>
-        {
-            list.Clear();
-            list.AddRange(value);
-        });
+        return _spansSource.Preview(predicate);
     }
 
-    [IgnoreMember]
-    public ReadOnlyObservableCollection<FunctionCallChatMessage> FunctionCalls { get; }
-
-    [Key(2)]
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ElapsedSeconds))]
-    public partial DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-
-    [Key(3)]
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ElapsedSeconds))]
-    public partial DateTimeOffset FinishedAt { get; set; }
-
-    [IgnoreMember]
-    [JsonIgnore]
-    public double ElapsedSeconds => Math.Max((FinishedAt - CreatedAt).TotalSeconds, 0);
-
-    [IgnoreMember]
-    public ObservableStringBuilder ReasoningMarkdownBuilder => EnsureReasoningMarkdownBuilder();
-
-    /// <summary>
-    /// The reasoning output in Markdown format for serialization.
-    /// </summary>
-    [Key(4)]
-    public string? ReasoningOutput
+    public void Edit(Action<IExtendedList<AssistantChatMessageSpan>> updateAction)
     {
-        get => _reasoningMarkdownBuilder?.ToString();
-        init
-        {
-            if (value is not { Length: > 0 }) return;
-
-            EnsureReasoningMarkdownBuilder().Append(value);
-        }
+        _spansSource.Edit(updateAction);
     }
 
-    [Key(5)]
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ReasoningElapsedSeconds))]
-    public partial DateTimeOffset? ReasoningFinishedAt { get; set; }
+    #endregion
 
-    [IgnoreMember]
-    [JsonIgnore]
-    public double ReasoningElapsedSeconds => Math.Max((ReasoningFinishedAt.GetValueOrDefault() - CreatedAt).TotalSeconds, 0);
-
-    [IgnoreMember] private readonly SourceList<FunctionCallChatMessage> _functionCallsSource = new();
-    [IgnoreMember] private readonly IDisposable _functionCallsConnection;
-
-    [IgnoreMember] private ObservableStringBuilder? _reasoningMarkdownBuilder;
-
-    public AssistantChatMessageSpan()
-    {
-        MarkdownBuilder = new ObservableStringBuilder();
-        MarkdownBuilder.Changed += HandleMarkdownBuilderChanged;
-
-        FunctionCalls = _functionCallsSource
-            .Connect()
-            .ObserveOnDispatcher()
-            .DisposeMany()
-            .BindEx(out _functionCallsConnection);
-    }
-
-    public void AddFunctionCall(FunctionCallChatMessage functionCall)
-    {
-        _functionCallsSource.Add(functionCall);
-    }
-
-    private void HandleMarkdownBuilderChanged(in ObservableStringBuilderChangedEventArgs e)
-    {
-        OnPropertyChanged(nameof(Content));
-    }
-
-    [MemberNotNull(nameof(_reasoningMarkdownBuilder))]
-    private ObservableStringBuilder EnsureReasoningMarkdownBuilder()
-    {
-        if (_reasoningMarkdownBuilder != null) return _reasoningMarkdownBuilder;
-        _reasoningMarkdownBuilder = new ObservableStringBuilder();
-        _reasoningMarkdownBuilder.Changed += HandleReasoningMarkdownBuilderChanged;
-        return _reasoningMarkdownBuilder;
-    }
-
-    private void HandleReasoningMarkdownBuilderChanged(in ObservableStringBuilderChangedEventArgs e)
-    {
-        OnPropertyChanged(nameof(ReasoningOutput));
-    }
-
-    public void Dispose()
-    {
-        MarkdownBuilder.Changed -= HandleMarkdownBuilderChanged;
-        _functionCallsSource.Dispose();
-        _functionCallsConnection.Dispose();
-        if (_reasoningMarkdownBuilder != null) _reasoningMarkdownBuilder.Changed -= HandleReasoningMarkdownBuilderChanged;
-    }
 }
 
 [MessagePackObject(OnlyIncludeKeyedMembers = true, AllowPrivate = true)]
-public partial class UserChatMessage(string userPrompt, IEnumerable<ChatAttachment> attachments) : ChatMessage, IChatMessageWithAttachments
+public partial class UserChatMessage(string content, IEnumerable<ChatAttachment> attachments) : ChatMessage, IHaveChatAttachments
 {
     public override AuthorRole Role => AuthorRole.User;
 
     /// <summary>
     /// The actual prompt that sends to the LLM.
+    /// Including attachments converted prompts that are invisible to the user.
     /// </summary>
     [Key(0)]
-    public string UserPrompt { get; set; } = userPrompt;
+    [ObservableProperty]
+    public partial string Content { get; set; } = content;
 
     [Key(1)]
     public IEnumerable<ChatAttachment> Attachments { get; set; } = attachments;
 
-    /// <summary>
-    /// The inlines that display in the chat message.
-    /// </summary>
-    public InlineCollection Inlines { get; } = new();
-
-    [Key(2)]
-    private IEnumerable<MessagePackInline> MessagePackInlines
-    {
-        get => Dispatcher.UIThread.InvokeOnDemand(() => Inlines.Select(MessagePackInline.FromInline).ToImmutableArray());
-        set => Dispatcher.UIThread.InvokeOnDemand(() => Inlines.Reset(value.Select(i => i.ToInline())));
-    }
-
     [Key(3)]
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
-    public override string ToString() => UserPrompt;
+    public override string ToString() => Content;
 }
 
 /// <summary>
@@ -396,7 +316,7 @@ public partial class ActionChatMessage : ChatMessage
 /// Represents a function call action message in the chat.
 /// </summary>
 [MessagePackObject(AllowPrivate = true, OnlyIncludeKeyedMembers = true)]
-public sealed partial class FunctionCallChatMessage : ChatMessage, IChatMessageWithAttachments, IDisposable
+public sealed partial class FunctionCallChatMessage : ChatMessage, IHaveChatAttachments, IDisposable
 {
     [Key(0)]
     public override AuthorRole Role => AuthorRole.Tool;
@@ -436,6 +356,7 @@ public sealed partial class FunctionCallChatMessage : ChatMessage, IChatMessageW
     [Key(8)]
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ElapsedSeconds))]
+    [NotifyPropertyChangedFor(nameof(SerializableDisplayBlocks))] // Notify for serialization purposes
     public partial DateTimeOffset FinishedAt { get; set; } = DateTimeOffset.UtcNow;
 
     [IgnoreMember]
@@ -516,10 +437,11 @@ public sealed partial class FunctionCallChatMessage : ChatMessage, IChatMessageW
             .BindEx(_disposables);
 
         // Monitor IsWaitingForUserInput changes
-        _disposables.Add(_displaySink
-            .Connect()
-            .WhenAnyPropertyChanged(nameof(ChatPluginDisplayBlock.IsWaitingForUserInput))
-            .Subscribe(_ => OnPropertyChanged(nameof(IsWaitingForUserInput))));
+        _disposables.Add(
+            _displaySink
+                .Connect()
+                .WhenAnyPropertyChanged(nameof(ChatPluginDisplayBlock.IsWaitingForUserInput))
+                .Subscribe(_ => OnPropertyChanged(nameof(IsWaitingForUserInput))));
 
         _disposables.Add(_displaySink);
     }

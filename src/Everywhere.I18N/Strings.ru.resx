@@ -446,7 +446,7 @@
     <data name="ChatWindow_HistoryAction_Rename" xml:space="preserve">
         <value>Переименовать</value>
     </data>
-    <data name="ChatWindow_HistoryAction_Delete" xml:space="preserve">
+    <data name="Common_Delete" xml:space="preserve">
         <value>Удалить</value>
     </data>
     <data name="AboutPage_WelcomePage" xml:space="preserve">
@@ -525,10 +525,10 @@
         <value>Чем выше значение, тем разнообразнее и богаче словарный запас; чем ниже значение, тем проще и прямолинейнее язык. Эта настройка эффективна только для некоторых моделей. Если возникает ошибка, попробуйте восстановить значение по умолчанию.</value>
     </data>
     <data name="CustomAssistant_Endpoint_Header" xml:space="preserve">
-        <value>API Url</value>
+        <value>URL</value>
     </data>
     <data name="CustomAssistant_Endpoint_Description" xml:space="preserve">
-        <value>Оставьте значение по умолчанию, если не знаете, что делать. Должно начинаться с &quot;http(s)://&quot;.</value>
+        <value>Должен начинаться с http:// или https://.</value>
     </data>
     <data name="CustomAssistant_ApiKey_Header" xml:space="preserve">
         <value>API Key</value>
@@ -540,22 +540,22 @@
         <value>Поддержка ввода изображений</value>
     </data>
     <data name="CustomAssistant_IsImageInputSupported_Description" xml:space="preserve">
-        <value>Вы можете загружать изображения в контексте чата. Если вы не уверены, что делаете, оставьте значение по умолчанию. Если модель не поддерживает ввод изображений, включение этой функции может привести к сбоям.</value>
+        <value>Модель поддерживает ввод изображений. Если модель не поддерживает, включение этой опции может привести к ошибкам в диалоге.</value>
     </data>
     <data name="CustomAssistant_IsFunctionCallingSupported_Header" xml:space="preserve">
         <value>Поддержка использования инструментов</value>
     </data>
     <data name="CustomAssistant_IsFunctionCallingSupported_Description" xml:space="preserve">
-        <value>Модель может использовать инструменты, которые вы настроили в контексте чата. Если вы не уверены, что делаете, оставьте значение по умолчанию. Если модель не поддерживает вызов функций, включение этой функции может привести к сбоям.</value>
+        <value>Модель поддерживает использование настроенных инструментов. Если модель не поддерживает, включение этой опции может привести к ошибкам в диалоге.</value>
     </data>
     <data name="CustomAssistant_IsDeepThinkingSupported_Description" xml:space="preserve">
-        <value>Модель может обдумывать перед ответами. Если вы не уверены, что делаете, оставьте значение по умолчанию. Если модель не поддерживает глубокое мышление, включение этой функции может привести к сбоям.</value>
+        <value>Модель поддерживает предварительное обдумывание перед ответом. Если модель не поддерживает, включение этой опции может привести к ошибкам в диалоге.</value>
     </data>
     <data name="CustomAssistant_IsDeepThinkingSupported_Header" xml:space="preserve">
         <value>Поддержка глубокого мышления</value>
     </data>
     <data name="CustomAssistant_MaxTokens_Description" xml:space="preserve">
-        <value>Максимальная длина контекста одного чата. Если вы не уверены, что делаете, оставьте значение по умолчанию. Установка этого значения больше, чем значение по умолчанию, может привести к сбоям.</value>
+        <value>Максимальная длина контекста диалога. Это повлияет на стратегию построения визуального дерева, постарайтесь установить реальное значение.</value>
     </data>
     <data name="CustomAssistant_MaxTokens_Header" xml:space="preserve">
         <value>Максимальная длина контекста (max_tokens)</value>
@@ -567,7 +567,7 @@
         <value>Схема API</value>
     </data>
     <data name="CustomAssistant_Schema_Description" xml:space="preserve">
-        <value>Выберите схему API. Оставьте значение по умолчанию, если не знаете, что делать.</value>
+        <value>Выберите API протокол. Обратите внимание, что это не всегда связано с моделью, например, Gemini предоставляет совместимый с OpenAI протокол, подробности смотрите в официальной документации соответствующей модели.</value>
     </data>
     <data name="CommonSettings_IsStartupEnabled_Header" xml:space="preserve">
         <value>Запуск при старте</value>
@@ -636,7 +636,7 @@
         <value>ID модели</value>
     </data>
     <data name="CustomAssistant_ModelId_Description" xml:space="preserve">
-        <value>Идентификатор модели, используемый для API вызовов, например, gpt-4o. Если вы не уверены, что это такое, оставьте значение по умолчанию.</value>
+        <value>Идентификатор модели для вызова API, например, gpt-4o.</value>
     </data>
     <data name="ChatPluginPage_Title" xml:space="preserve">
         <value>Чат-плагины</value>
@@ -692,11 +692,11 @@
     <data name="ChatPluginPage_TabItem_Functions_Header" xml:space="preserve">
         <value>Функции</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_Header" xml:space="preserve">
-        <value>Визуальное дерево</value>
+    <data name="BuiltInChatPlugin_VisualContext_Header" xml:space="preserve">
+        <value>Визуальный Контекст</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_Description" xml:space="preserve">
-        <value>Обеспечивает возможность восприятия и управления элементами интерфейса на экране.</value>
+    <data name="BuiltInChatPlugin_VisualContext_Description" xml:space="preserve">
+        <value>Обеспечивает восприятие и взаимодействие с содержимым экрана.</value>
     </data>
     <data name="ChangeLogView_ViewOnGitHubHyperlinkButton_Content" xml:space="preserve">
         <value>Посмотреть на GitHub</value>
@@ -733,39 +733,18 @@
     <data name="WelcomeView_NextStepButton_Content" xml:space="preserve">
         <value>Следующий шаг</value>
     </data>
-    <data name="WelcomeView_SelectModelProviderStep_Message1" xml:space="preserve">
-        <value>Хорошо, перейдем к Шагу 1: выбору &quot;мозга&quot; для меня!
-Мой интеллект исходит от мощных больших языковых моделей (LLM), которые предоставляются специализированными поставщиками услуг, перечисленными ниже. Вы можете выбрать любого из них, чтобы дать мне силу.</value>
+    <data name="WelcomeView_ConfiguratorStep_Message1" xml:space="preserve">
+        <value>Теперь давайте перейдем к первому шагу: выберите для меня «мозг»!
+Мой интеллект основан на большом языковом модели, и мне нужно, чтобы вы помогли мне настроить его. Я предлагаю вам несколько режимов настройки, выберите тот, который вам подходит.</value>
     </data>
-    <data name="WelcomeView_SelectModelProviderStep_Message2" xml:space="preserve">
-        <value>Пожалуйста, выберите поставщика, которого вы используете или планируете использовать, и я расскажу вам больше о нем. Не волнуйтесь, Everywhere - это просто независимый клиент и не имеет официальной связи с ними.</value>
+    <data name="WelcomeView_ConfiguratorStep_Message2" xml:space="preserve">
+        <value>Не волнуйтесь, если что-то не подойдет, вы всегда можете вернуться и выбрать заново.</value>
     </data>
-    <data name="WelcomeView_ModelProviderWrapper_openai_Description" xml:space="preserve">
-        <value>OpenAI - популярный поставщик AI моделей, известный своей серией GPT и другими. Вы можете зарегистрироваться и получить API ключ на их официальном сайте. Пожалуйста, проверьте их список поддерживаемых стран и регионов.</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message1" xml:space="preserve">
+        <value>Добро пожаловать в режим предустановок. Просто выберите поставщика большого модели, затем получите API-ключ и заполните его, и наконец выберите модель, чтобы начать использовать!</value>
     </data>
-    <data name="WelcomeView_ModelProviderWrapper_anthropic_Description" xml:space="preserve">
-        <value>Anthropic сосредоточен на разработке безопасных и надежных AI моделей, флагманским продуктом является серия Claude. Пожалуйста, посетите их официальный сайт для получения информации о моделях и ценах на API.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_google_Description" xml:space="preserve">
-        <value>Google разрабатывает серию мультимодальных AI моделей Gemini. Вы можете получить API ключ через Google AI Studio или Google Cloud Platform. Пожалуйста, убедитесь, что услуга доступна в вашем регионе.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_deepseek_Description" xml:space="preserve">
-        <value>DeepSeek — это компания, сосредоточенная на общей искусственной интеллекции, с моделями, которые хорошо работают в генерации кода и обработке китайского языка. Вы можете зарегистрироваться и начать на их официальном сайте.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_moonshot_Description" xml:space="preserve">
-        <value>Moonshot AI известна своим интеллектуальным помощником Kimi, который поддерживает ввод длинных текстов. Компания предлагает открытую платформу с API сервисами. Для получения дополнительной информации посетите их официальный сайт.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_openrouter_Description" xml:space="preserve">
-        <value>OpenRouter — это сервис агрегации и маршрутизации API, который позволяет вам получить доступ к различным моделям от нескольких поставщиков (таких как OpenAI, Anthropic, Google и др.) через единый, унифицированный интерфейс. Это очень удобно для тестирования и сравнения различных моделей (включая бесплатные модели). Пожалуйста, обратитесь к их официальной документации для получения информации о ценах и доступных моделях.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_siliconflow_Description" xml:space="preserve">
-        <value>SiliconFlow — это эффективная платформа AI-инференса, поддерживающая широкий спектр открытых и проприетарных моделей (включая бесплатные модели). Она предоставляет разработчикам гибкие, высокопроизводительные услуги по развертыванию и инференсу моделей. Для получения информации о поддерживаемых моделях и ценах посетите их официальный сайт.</value>
-    </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message1" xml:space="preserve">
-        <value>Отлично! Теперь нам нужен API ключ, чтобы начать. Пожалуйста, введите или вставьте его в текстовое поле ниже. Затем нажмите &quot;Проверить API ключ&quot;.</value>
-    </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message2" xml:space="preserve">
-        <value>Не волнуйтесь, ваш ключ в полной безопасности. Он используется только для аутентификации с поставщиком модели, и я его не читаю.</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message2" xml:space="preserve">
+        <value>Не волнуйтесь, ваш ключ будет зашифрован и сохранен, я не смогу его прочитать.</value>
     </data>
     <data name="WelcomeView_SelectModelProviderStep_OfficialWebsiteHyperlinkButton_Content" xml:space="preserve">
         <value>👉 Официальный сайт</value>
@@ -782,25 +761,22 @@
     <data name="WelcomeView_IntroStep_Message4" xml:space="preserve">
         <value>Если вы используете это впервые, я проведу вас через начальную настройку в три простых шага.</value>
     </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message3" xml:space="preserve">
-        <value>Если вы не уверены, как его получить, вы можете ознакомиться с этим руководством, которое я подготовил для вас:</value>
-    </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message4" xml:space="preserve">
-        <value>Шепотом: Обычно он начинается с «sk-» или «AI», так что не пропустите его!</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message3" xml:space="preserve">
+        <value>Если вы не знаете, как выбрать или как получить API-ключ, пожалуйста, обратитесь к обучающим материалам здесь.</value>
     </data>
     <data name="WelcomeView_EnterApiKeyStep_HowToGetApiKeyHyperlinkButton_Content" xml:space="preserve">
         <value>👉 Нажмите, чтобы открыть</value>
     </data>
-    <data name="WelcomeView_VerifyApiKeyButton_Content" xml:space="preserve">
-        <value>Проверить API ключ</value>
+    <data name="WelcomeView_CheckConnectivityButton_Content" xml:space="preserve">
+        <value>Проверить доступность помощника</value>
     </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message5" xml:space="preserve">
-        <value>Также вы можете выбрать модель или оставить по умолчанию.</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message4" xml:space="preserve">
+        <value>После завершения выбора нажмите «Проверить доступность помощника», я проверю, правильно ли настроено.</value>
     </data>
     <data name="WelcomeView_ApiKeyTextBox_Watermark" xml:space="preserve">
         <value>Введите API ключ здесь...</value>
     </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message6" xml:space="preserve">
+    <data name="WelcomeView_AssistantStep_PresetBased_Message5" xml:space="preserve">
         <value>🎉 Проверка успешна! Переходим к последнему шагу!</value>
     </data>
     <data name="WelcomeView_ShortcutStep_Message1" xml:space="preserve">
@@ -813,22 +789,22 @@
         <value>Ошибка аутентификации.</value>
     </data>
     <data name="WelcomeView_TelemetryStep_Message1" xml:space="preserve">
-        <value>Чтобы помочь мне улучшиться, мне нужно включить «Телеметрию» для сбора анонимных данных. Эти данные используются исключительно для анализа и не содержат и не позволяют делать выводы о какой-либо личной информации о вас.</value>
+        <value>Чтобы помочь мне развиваться, мы приглашаем вас присоединиться к программе пользовательского опыта. Мы будем собирать ваши данные использования, которые будут использоваться только для анализа и не будут содержать и не смогут быть использованы для вывода каких-либо данных, относящихся к вам лично.</value>
     </data>
     <data name="WelcomeView_TelemetryStep_Message2" xml:space="preserve">
-        <value>Вы можете выбрать отправку только необходимых данных; эта опция не повлияет на основную функциональность.</value>
+        <value>Если вы не присоединитесь, будут отправляться только необходимые данные. Пожалуйста, будьте уверены, что этот выбор не повлияет на основные функции.</value>
     </data>
     <data name="WelcomeView_SendOnlyNecessaryDataButton_Content" xml:space="preserve">
-        <value>Отправлять только необходимые данные</value>
+        <value>Не присоединяться</value>
     </data>
     <data name="WelcomeView_EnableTelemetryButton_Content" xml:space="preserve">
-        <value>Включить телеметрию</value>
+        <value>Присоединиться</value>
     </data>
     <data name="CommonSettings_DiagnosticData_Header" xml:space="preserve">
-        <value>Диагностика</value>
+        <value>Присоединиться к программе пользовательского опыта</value>
     </data>
     <data name="CommonSettings_DiagnosticData_Description" xml:space="preserve">
-        <value>Чтобы помочь нам улучшиться, нам нужна «телеметрия» для сбора анонимных данных. Эти данные используются исключительно для анализа и не содержат и не позволяют делать выводы о какой-либо личной информации о вас. Вы можете выбрать отправку только необходимых данных; эта опция не повлияет на основную функциональность.</value>
+        <value>Чтобы помочь нам улучшить, мы приглашаем вас присоединиться к программе пользовательского опыта. Мы будем собирать ваши данные использования, которые будут использоваться только для анализа и не будут содержать и не смогут быть использованы для вывода каких-либо данных, относящихся к вам лично. Если вы не присоединитесь, будут отправляться только необходимые данные. Этот выбор не повлияет на основные функции.</value>
     </data>
     <data name="ChatWindowSettings_ShowChatStatistics_Header" xml:space="preserve">
         <value>Показать статистику чата</value>
@@ -987,7 +963,7 @@
         <value>Укажите описание ассистента, используемое исключительно для отображения и различения.</value>
     </data>
     <data name="CustomAssistant_SystemPrompt_Description" xml:space="preserve">
-        <value>Системная подсказка отправляется модели по умолчанию в начале разговора. Хорошо составленная подсказка включает введение, описание задачи и контекстную информацию.
+        <value>Системный подсказка будет отправлена модели в начале диалога и будет обновляться с каждым отправленным сообщением.
 В подсказке можно использовать заполнители, заключенные в {}, которые будут заменены соответствующим содержимым перед отправкой модели.</value>
     </data>
     <data name="CustomAssistant_SystemPrompt_Header" xml:space="preserve">
@@ -1009,16 +985,16 @@
         <value>Нет</value>
     </data>
     <data name="CustomAssistant_ModelProviderTemplate_Header" xml:space="preserve">
-        <value>Шаблон поставщика модели</value>
+        <value>Поставщик модели</value>
     </data>
     <data name="CustomAssistant_ModelDefinitionTemplate_Header" xml:space="preserve">
-        <value>Шаблон определения модели</value>
+        <value>Название модели</value>
     </data>
     <data name="CustomAssistant_ModelDefinitionTemplate_Description" xml:space="preserve">
-        <value>Выберите шаблон для автоматического заполнения таких параметров, как «Идентификатор модели, Поддержка ввода изображений, Поддержка использования инструментов». Вы можете изменять эти настройки по мере необходимости.</value>
+        <value>Выберите предустановленное название модели.</value>
     </data>
     <data name="CustomAssistant_ModelProviderTemplate_Description" xml:space="preserve">
-        <value>Выберите шаблон для автоматического заполнения таких параметров, как «Адрес API и Схема API». Вы можете изменять эти настройки по мере необходимости.</value>
+        <value>Выберите предустановленного поставщика модели.</value>
     </data>
     <data name="HandledSystemException_IOException" xml:space="preserve">
         <value>Произошла общая ошибка ввода-вывода. Это может быть связано с проблемой чтения или записи файла.</value>
@@ -1278,14 +1254,11 @@
     <data name="Windows_BuiltInChatPlugin_PowerShell_ExecuteScript_ScriptConsent_Header" xml:space="preserve">
         <value>Следующий скрипт PowerShell будет выполнен</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureVisualElementById_Header" xml:space="preserve">
+    <data name="BuiltInChatPlugin_VisualContext_CaptureVisualElementById_Header" xml:space="preserve">
         <value>Захват элемента интерфейса</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureFullScreen_Header" xml:space="preserve">
-        <value>Захватить весь экран</value>
-    </data>
-    <data name="BuiltInChatPlugin_VisualTree_ExecuteVisualActionQueue_Header" xml:space="preserve">
-        <value>Управление элементами интерфейса</value>
+    <data name="BuiltInChatPlugin_VisualContext_ExecuteVisualActions_Header" xml:space="preserve">
+        <value>Автоматизация Действий</value>
     </data>
     <data name="Windows_BuiltInChatPlugin_Everything_SearchFiles_Header" xml:space="preserve">
         <value>Поиск файлов через Everything</value>
@@ -1296,13 +1269,13 @@
     <data name="ChatWindowViewModel_AddFile_FilePickerFileType_Documents" xml:space="preserve">
         <value>Документ</value>
     </data>
-    <data name="ChatWindowViewModel_AddFile_FilePickerFileType_SupportedFiles" xml:space="preserve">
+    <data name="FilePickerFileType_SupportedFiles" xml:space="preserve">
         <value>Поддерживаемые файлы</value>
     </data>
     <data name="ChatWindowViewModel_AddFile_FilePickerFileType_Images" xml:space="preserve">
         <value>Изображения</value>
     </data>
-    <data name="ChatWindowViewModel_FilePickerFileType_AllFiles" xml:space="preserve">
+    <data name="FilePickerFileType_AllFiles" xml:space="preserve">
         <value>Все файлы</value>
     </data>
     <data name="ChatContext_Metadata_Topic_Header" xml:space="preserve">
@@ -1407,17 +1380,11 @@
     <data name="BuiltInChatPlugin_FileSystem_EnsureFileSystemInfo_PathNotExist_ErrorMessage" xml:space="preserve">
         <value>Указанный путь не существует.</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureVisualElementById_Description" xml:space="preserve">
+    <data name="BuiltInChatPlugin_VisualContext_CaptureVisualElementById_Description" xml:space="preserve">
         <value>Сделать скриншот визуального элемента.</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureFullScreen_Description" xml:space="preserve">
-        <value>Сделать скриншот всего экрана.</value>
-    </data>
-    <data name="BuiltInChatPlugin_VisualTree_ExecuteVisualActionQueue_Description" xml:space="preserve">
-        <value>Выполнить набор действий автоматизации UI, таких как нажатие, ввод текста или отправка сочетаний клавиш.</value>
-    </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureFullScreen_NoScreenAvailable_ErrorMessage" xml:space="preserve">
-        <value>Нет доступного экрана для захвата.</value>
+    <data name="BuiltInChatPlugin_VisualContext_ExecuteVisualActions_Description" xml:space="preserve">
+        <value>Выполняет набор автоматизированных действий, таких как клик, ввод или отправка горячих клавиш.</value>
     </data>
     <data name="BuiltInChatPlugin_WebBrowser_WebSearch_Description" xml:space="preserve">
         <value>Выполнить веб-поиск.</value>
@@ -1446,26 +1413,26 @@
     <data name="BuiltInChatPlugin_WebBrowser_PuppeteerBrowserLaunchError_ErrorMessage" xml:space="preserve">
         <value>Не удалось запустить браузер Puppeteer.</value>
     </data>
-    <data name="ElementPickerToolTip_TipTextBlock_Text" xml:space="preserve">
+    <data name="ScreenSelectionToolTip_TipText_Normal" xml:space="preserve">
         <value>Левый клик для выбора, правый клик или Esc для отмены
 Колесо прокрутки или числовые клавиши для переключения режимов выбора</value>
     </data>
-    <data name="ElementPickerToolTip_ScreenPickModeBadge_Content" xml:space="preserve">
+    <data name="ScreenSelectionMode_Screen" xml:space="preserve">
         <value>Экран</value>
     </data>
-    <data name="ElementPickerToolTip_WindowPickModeBadge_Content" xml:space="preserve">
+    <data name="ScreenSelectionMode_Window" xml:space="preserve">
         <value>Окно</value>
     </data>
-    <data name="ElementPickerToolTip_ElementPickModeBadge_Content" xml:space="preserve">
+    <data name="ScreenSelectionMode_Element" xml:space="preserve">
         <value>Элемент</value>
     </data>
-    <data name="ElementPickerToolTip_GetElementDescription_NoElement" xml:space="preserve">
+    <data name="ScreenSelectionToolTip_GetElementDescription_NoElement" xml:space="preserve">
         <value>Нет</value>
     </data>
     <data name="Common_None" xml:space="preserve">
         <value>Нет</value>
     </data>
-    <data name="ModelProviderSchema_OpenAI_ChatCompletions" xml:space="preserve">
+    <data name="ModelProviderSchema_OpenAI" xml:space="preserve">
         <value>OpenAI (Chat Completions)</value>
     </data>
     <data name="ModelProviderSchema_Anthropic" xml:space="preserve">
@@ -1618,7 +1585,7 @@
     <data name="ChatPluginPageViewModel_RemoveMcpPlugin_ConfirmationMessage" xml:space="preserve">
         <value>Вы уверены, что хотите удалить “{0}”?</value>
     </data>
-    <data name="ChatPluginPage_AddMCPPluginButton_Content" xml:space="preserve">
+    <data name="ChatPluginPage_AddMcpPluginButton_Content" xml:space="preserve">
         <value>Добавить</value>
     </data>
     <data name="ChatPluginPage_CopyLogsButton_ToolTip" xml:space="preserve">
@@ -1696,7 +1663,7 @@
     <data name="DebugFeaturesControl_CreateDumpToast_Content" xml:space="preserve">
         <value>Пожалуйста, подождите, пока создается дамп. В это время Everywhere будет неотзывчивым.</value>
     </data>
-    <data name="ModelProviderSchema_OpenAI_Responses" xml:space="preserve">
+    <data name="ModelProviderSchema_OpenAIResponses" xml:space="preserve">
         <value>OpenAI (Responses API)</value>
     </data>
     <data name="MacOS_PermissionHelper_PleaseGrantAccessibilityPermission" xml:space="preserve">
@@ -1853,7 +1820,7 @@
         <value>zsh оболочка</value>
     </data>
     <data name="MacOS_BuiltInChatPlugin_Zsh_Description" xml:space="preserve">
-        <value/>
+        <value>Предоставляет возможность выполнять скрипты zsh, позволяя взаимодействовать с системой напрямую, но это также опасно и может привести к случайному удалению файлов или сбоям системы.</value>
     </data>
     <data name="MacOS_BuiltInChatPlugin_Zsh_ExecuteScript_Header" xml:space="preserve">
         <value>Выполнить скрипт</value>
@@ -1899,5 +1866,210 @@
     </data>
     <data name="CustomAssistant_ConfiguratorSelector_Header" xml:space="preserve">
         <value>Настроить поставщика ИИ</value>
+    </data>
+    <data name="ApiKeyComboBox_AddApiKey" xml:space="preserve">
+        <value>Добавить API-ключ</value>
+    </data>
+    <data name="ApiKeyComboBox_ManageApiKey" xml:space="preserve">
+        <value>Управление API ключами</value>
+    </data>
+    <data name="ManageApiKeyForm_DeleteApiKeys_Dialog_Message" xml:space="preserve">
+        <value>Вы уверены, что хотите удалить {0} API ключей? Это действие нельзя отменить!</value>
+    </data>
+    <data name="Common_Copied" xml:space="preserve">
+        <value>Скопировано</value>
+    </data>
+    <data name="ManageApiKeyForm_DeleteApiKey_Flyout_Content" xml:space="preserve">
+        <value>Вы уверены, что хотите удалить? Это действие нельзя отменить!</value>
+    </data>
+    <data name="ManageApiKeyForm_SecretKeyDataGridTemplateColumn_Header" xml:space="preserve">
+        <value>Ключ</value>
+    </data>
+    <data name="ManageApiKeyForm_NameDataGridTextColumn_Header" xml:space="preserve">
+        <value>Название</value>
+    </data>
+    <data name="CustomAssistantInformationForm_IconButton_ToolTip" xml:space="preserve">
+        <value>Нажмите, чтобы изменить иконку</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_AdvancedConfiguratorModel_Header" xml:space="preserve">
+        <value>Расширенный режим</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_AdvancedConfiguratorModel_Description" xml:space="preserve">
+        <value>Свободная настройка всех параметров модели, совместима с сторонними моделями</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_PresetBasedConfiguratorModel_Header" xml:space="preserve">
+        <value>Предустановленный режим</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_PresetBasedConfiguratorModel_Description" xml:space="preserve">
+        <value>Выберите распространенные модели из предустановок и быстро начните работу</value>
+    </data>
+    <data name="CreateApiKeyForm_NameTextBox_Label" xml:space="preserve">
+        <value>Название (только для отображения и различения)</value>
+    </data>
+    <data name="CreateApiKeyForm_SecretKeyTextBox_Label" xml:space="preserve">
+        <value>Ключ</value>
+    </data>
+    <data name="ManageApiKeyForm_AddApiKeyButton_Content" xml:space="preserve">
+        <value>Добавить</value>
+    </data>
+    <data name="ManageApiKeyForm_DeleteApiKeysButton_Content" xml:space="preserve">
+        <value>Удалить выделенные</value>
+    </data>
+    <data name="WelcomeView_ModelProviderHyperlinkButton_Content" xml:space="preserve">
+        <value>Нажмите, чтобы просмотреть</value>
+    </data>
+    <data name="WelcomeView_AssistantStep_Advanced_Message1" xml:space="preserve">
+        <value>Добро пожаловать в расширенный режим. Вы можете настроить сторонние модели, поддерживаемые API.</value>
+    </data>
+    <data name="WelcomeView_AssistantStep_Advanced_Message2" xml:space="preserve">
+        <value>Обратите внимание, что я не могу гарантировать полную совместимость со всеми сторонними моделями.</value>
+    </data>
+    <data name="AdvancedModelProviderConfigurator_InvalidEndpoint" xml:space="preserve">
+        <value>Должен быть действительный URL, начинающийся с http:// или https://</value>
+    </data>
+    <data name="VisualElementType_Spinner" xml:space="preserve">
+        <value>Выпадающий список</value>
+    </data>
+    <data name="VisualElementType_Splitter" xml:space="preserve">
+        <value>Разделитель</value>
+    </data>
+    <data name="VisualElementType_StatusBar" xml:space="preserve">
+        <value>Статусная строка</value>
+    </data>
+    <data name="VisualElementType_ToolBar" xml:space="preserve">
+        <value>Панель инструментов</value>
+    </data>
+    <data name="VisualElementType_Header" xml:space="preserve">
+        <value>Заголовок</value>
+    </data>
+    <data name="VisualElementType_HeaderItem" xml:space="preserve">
+        <value>Элемент заголовка</value>
+    </data>
+    <data name="ApiKey_EmptyName" xml:space="preserve">
+        <value>(пусто)</value>
+    </data>
+    <data name="ChatWindowSettings_AlwaysStartNewChat_Header" xml:space="preserve">
+        <value>Всегда начинать новый чат</value>
+    </data>
+    <data name="ChatWindowSettings_AlwaysStartNewChat_Description" xml:space="preserve">
+        <value>Автоматически начинать новую сессию при вызове приложения с помощью ярлыка, обходя предыдущий разговор.</value>
+    </data>
+    <data name="ChatPluginPage_ImportMcpPluginButton_ToolTip" xml:space="preserve">
+        <value>Импортировать из JSON</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_DialogTitle" xml:space="preserve">
+        <value>Импортировать MCP плагин</value>
+    </data>
+    <data name="McpImportForm_Description" xml:space="preserve">
+        <value>Вставьте ваш JSON конфигурации MCP ниже или импортируйте его из локального файла.</value>
+    </data>
+    <data name="McpImportForm_OpenButton_Content" xml:space="preserve">
+        <value>Открыть</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_SuccessToast_Title" xml:space="preserve">
+        <value>Импортировано {0} MCP плагинов</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_FailedToast_Title" xml:space="preserve">
+        <value>Не удалось импортировать MCP плагины</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_NotFoundToast_Title" xml:space="preserve">
+        <value>Не найдено действительных MCP плагинов</value>
+    </data>
+    <data name="McpTransportConfiguration_DefaultName" xml:space="preserve">
+        <value>MCP Сервер</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_PartialSuccessToast_Title" xml:space="preserve">
+        <value>Успешно импортировано {0} плагинов, {1} не удалось</value>
+    </data>
+    <data name="Application_TrayIcon_Menu_OpenChatWindow" xml:space="preserve">
+        <value>Открыть окно чата</value>
+    </data>
+    <data name="Linux_NativeHelper_RestartAsAdministrator_DesktopNotification" xml:space="preserve">
+        <value>В Linux обычно используются только пользовательские права. Если вам нужны права администратора, перезапустите приложение с помощью sudo.</value>
+    </data>
+    <data name="Linux_ShortcutListener_Register_FailedToGrabHotkey" xml:space="preserve">
+        <value>Не удалось зарегистрировать горячую клавишу. Эта комбинация клавиш может быть занята.</value>
+    </data>
+    <data name="ScreenSelectionMode_Free" xml:space="preserve">
+        <value>Свободный</value>
+    </data>
+    <data name="ScreenSelectionToolTip_TipText_Free" xml:space="preserve">
+        <value>Удерживайте левую кнопку мыши для выделения, правой кнопкой или Esc для выхода
+Прокрутка или цифровые клавиши для переключения режима выбора</value>
+    </data>
+    <data name="ChatWindow_ChatInputArea_AddAttachmentMenuItems_Screenshot" xml:space="preserve">
+        <value>Скриншот</value>
+    </data>
+    <data name="ChatWindowSettings_AutomaticallyAddTextSelection_Header" xml:space="preserve">
+        <value>Автоматически Добавлять Выделение</value>
+    </data>
+    <data name="ChatWindowSettings_AutomaticallyAddTextSelection_Description" xml:space="preserve">
+        <value>При включении выделенный текст будет автоматически добавлен в качестве вложения.</value>
+    </data>
+    <data name="BuiltInChatPlugin_VisualContext_ListWindows_Header" xml:space="preserve">
+        <value>Список Окон</value>
+    </data>
+    <data name="BuiltInChatPlugin_VisualContext_ListWindows_Description" xml:space="preserve">
+        <value>Перечисляет все окна на экране.</value>
+    </data>
+    <data name="ExperimentalBadge_Content" xml:space="preserve">
+        <value>Экспериментально</value>
+    </data>
+    <data name="ExperimentalBadge_ToolTip" xml:space="preserve">
+        <value>Эта функция является экспериментальной и может привести к неожиданным ошибкам и результатам.</value>
+    </data>
+    <data name="CommonSettings_IsUserStartupEnabled_Header" xml:space="preserve">
+        <value>Запуск При Включении</value>
+    </data>
+    <data name="CommonSettings_IsUserStartupEnabled_Description" xml:space="preserve">
+        <value>Everywhere будет автоматически запускаться при включении компьютера.</value>
+    </data>
+    <data name="ModelProviderSchema_DeepSeek" xml:space="preserve">
+        <value>DeepSeek</value>
+    </data>
+    <data name="ChatWindow_ChatInputArea_SettingsMenuItems_MoreSettings" xml:space="preserve">
+        <value>Больше Настроек</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_Header" xml:space="preserve">
+        <value>fd-find</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_Description" xml:space="preserve">
+        <value>Ищет файлы на вашем компьютере с помощью fd-find (высокопроизводительный локальный инструмент поиска файлов). Для его использования необходимо установить fd-find.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_SearchFiles_Header" xml:space="preserve">
+        <value>Поиск файлов</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_SearchFiles_Description" xml:space="preserve">
+        <value>Ищет файлы или каталоги в Linux с помощью fd-find.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_SearchFiles_DetailMessage" xml:space="preserve">
+        <value>Найдено {0} файлов</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_Description" xml:space="preserve">
+        <value>Предоставляет возможность выполнения bash-скриптов, позволяя взаимодействовать с системой напрямую. Однако это также связано с рисками, которые могут привести к случайному удалению файлов или сбоям системы.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_DenyMessage" xml:space="preserve">
+        <value>Пользователь отказал в разрешении на выполнение bash-скрипта.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_ErrorMessage" xml:space="preserve">
+        <value>Ошибка выполнения bash-скрипта: {0}</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_Header" xml:space="preserve">
+        <value>Выполнение скрипта</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_ScriptConsent_Header" xml:space="preserve">
+        <value>Следующий bash-скрипт будет выполнен</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_Header" xml:space="preserve">
+        <value>Bash Shell</value>
+    </data>
+    <data name="HandledSystemException_Serialization" xml:space="preserve">
+        <value>Ошибка при разборе данных.</value>
+    </data>
+    <data name="HandledSystemException_FunctionInvoking" xml:space="preserve">
+        <value>Ошибка при вызове инструмента.</value>
+    </data>
+    <data name="ChatWindowViewModel_ExportMarkdown_ReasoningOutput" xml:space="preserve">
+        <value>Глубокое мышление</value>
     </data>
 </root>

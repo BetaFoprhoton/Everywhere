@@ -446,7 +446,7 @@
     <data name="ChatWindow_HistoryAction_Rename" xml:space="preserve">
         <value>Renommer</value>
     </data>
-    <data name="ChatWindow_HistoryAction_Delete" xml:space="preserve">
+    <data name="Common_Delete" xml:space="preserve">
         <value>Supprimer</value>
     </data>
     <data name="AboutPage_WelcomePage" xml:space="preserve">
@@ -525,10 +525,10 @@
         <value>Plus la valeur est élevée, plus le vocabulaire est diversifié et riche ; plus la valeur est basse, plus le langage est simple et direct. Ce réglage n'est efficace que pour certains modèles. Si vous rencontrez une erreur, essayez de rétablir la valeur par défaut.</value>
     </data>
     <data name="CustomAssistant_Endpoint_Header" xml:space="preserve">
-        <value>URL de l'API</value>
+        <value>URL</value>
     </data>
     <data name="CustomAssistant_Endpoint_Description" xml:space="preserve">
-        <value>Laissez cette valeur par défaut si vous ne savez pas quoi faire. Doit commencer par &quot;http(s)://&quot;.</value>
+        <value>Doit commencer par http:// ou https://.</value>
     </data>
     <data name="CustomAssistant_ApiKey_Header" xml:space="preserve">
         <value>Clé API</value>
@@ -540,22 +540,22 @@
         <value>Support d'entrée d'image</value>
     </data>
     <data name="CustomAssistant_IsImageInputSupported_Description" xml:space="preserve">
-        <value>Vous pouvez télécharger des images dans le contexte de chat. Si vous n'êtes pas sûr de ce que vous faites, gardez la valeur par défaut. Si le modèle ne supporte pas les entrées d'image, activer cette option peut entraîner des échecs.</value>
+        <value>Le modèle prend en charge l'entrée d'image. Si le modèle ne prend pas en charge cette option, l'activer peut entraîner des erreurs lors des conversations.</value>
     </data>
     <data name="CustomAssistant_IsFunctionCallingSupported_Header" xml:space="preserve">
         <value>Support de l'utilisation des outils</value>
     </data>
     <data name="CustomAssistant_IsFunctionCallingSupported_Description" xml:space="preserve">
-        <value>Le modèle peut utiliser les outils que vous avez configurés dans le contexte de chat. Si vous n'êtes pas sûr de ce que vous faites, gardez la valeur par défaut. Si le modèle ne supporte pas l'appel de fonctions, activer cette option peut entraîner des échecs.</value>
+        <value>Le modèle prend en charge l'utilisation des outils configurés. Si le modèle ne prend pas en charge cette option, l'activer peut entraîner des erreurs lors des conversations.</value>
     </data>
     <data name="CustomAssistant_IsDeepThinkingSupported_Description" xml:space="preserve">
-        <value>Le modèle peut réfléchir avant de répondre. Si vous n'êtes pas sûr de ce que vous faites, gardez la valeur par défaut. Si le modèle ne supporte pas la réflexion approfondie, activer cette option peut entraîner des échecs.</value>
+        <value>Le modèle prend en charge la réflexion avant de répondre. Si le modèle ne prend pas en charge cette option, l'activer peut entraîner des erreurs lors des conversations.</value>
     </data>
     <data name="CustomAssistant_IsDeepThinkingSupported_Header" xml:space="preserve">
         <value>Support de la réflexion approfondie</value>
     </data>
     <data name="CustomAssistant_MaxTokens_Description" xml:space="preserve">
-        <value>La longueur maximale du contexte d'un seul chat. Si vous n'êtes pas sûr de ce que vous faites, gardez la valeur par défaut. Définir cette valeur plus grande que la valeur par défaut peut entraîner des échecs.</value>
+        <value>Longueur maximale du contexte de la conversation. Cela affectera la stratégie de construction de l'arbre visuel, veuillez le définir sur une valeur réelle si possible.</value>
     </data>
     <data name="CustomAssistant_MaxTokens_Header" xml:space="preserve">
         <value>Longueur Maximale du Contexte (max_tokens)</value>
@@ -567,7 +567,7 @@
         <value>Schéma de l'API</value>
     </data>
     <data name="CustomAssistant_Schema_Description" xml:space="preserve">
-        <value>Sélectionnez le schéma de l'API. Laissez cette valeur par défaut si vous ne savez pas quoi faire.</value>
+        <value>Choisissez le protocole API. Veuillez noter que cela n'est pas toujours associé au modèle, par exemple, Gemini propose un protocole compatible avec OpenAI, veuillez consulter la documentation officielle du modèle correspondant.</value>
     </data>
     <data name="CommonSettings_IsStartupEnabled_Header" xml:space="preserve">
         <value>Lancer au démarrage</value>
@@ -636,7 +636,7 @@
         <value>ID du Modèle</value>
     </data>
     <data name="CustomAssistant_ModelId_Description" xml:space="preserve">
-        <value>Identifiant du modèle utilisé pour les appels API, tel que gpt-4o. Si vous ne savez pas ce que c'est, conservez la valeur par défaut.</value>
+        <value>Identifiant du modèle utilisé pour les appels API, par exemple gpt-4o.</value>
     </data>
     <data name="ChatPluginPage_Title" xml:space="preserve">
         <value>Plugins de Chat</value>
@@ -692,11 +692,11 @@
     <data name="ChatPluginPage_TabItem_Functions_Header" xml:space="preserve">
         <value>Fonctions</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_Header" xml:space="preserve">
-        <value>Arbre Visuel</value>
+    <data name="BuiltInChatPlugin_VisualContext_Header" xml:space="preserve">
+        <value>Contexte Visuel</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_Description" xml:space="preserve">
-        <value>Permet de percevoir et manipuler les éléments de l'interface utilisateur à l'écran.</value>
+    <data name="BuiltInChatPlugin_VisualContext_Description" xml:space="preserve">
+        <value>Fournit la capacité de percevoir et d'interagir avec le contenu de l'écran.</value>
     </data>
     <data name="ChangeLogView_ViewOnGitHubHyperlinkButton_Content" xml:space="preserve">
         <value>Voir sur GitHub</value>
@@ -733,39 +733,18 @@ Astuce : Vous pouvez rouvrir ce message en cliquant sur « À propos - Quoi de n
     <data name="WelcomeView_NextStepButton_Content" xml:space="preserve">
         <value>Étape suivante</value>
     </data>
-    <data name="WelcomeView_SelectModelProviderStep_Message1" xml:space="preserve">
-        <value>D'accord, passons à l'étape 1 : choisir un « cerveau » pour moi !
-Mon intelligence provient de puissants modèles de langage de grande taille (LLM), fournis par les prestataires spécialisés listés ci-dessous. Vous pouvez en choisir un pour me propulser.</value>
+    <data name="WelcomeView_ConfiguratorStep_Message1" xml:space="preserve">
+        <value>Passons maintenant à la première étape : choisis-moi un « cerveau » !
+Mon intelligence est alimentée par un grand modèle de langage, et j'ai besoin de ton aide pour le configurer. Je te propose plusieurs modes de configuration, choisis celui qui te convient le mieux.</value>
     </data>
-    <data name="WelcomeView_SelectModelProviderStep_Message2" xml:space="preserve">
-        <value>Veuillez sélectionner un fournisseur que vous avez ou prévoyez d'utiliser, et je vous en dirai plus à son sujet. Ne vous inquiétez pas, Everywhere est juste un client indépendant et n'est pas officiellement affilié avec eux.</value>
+    <data name="WelcomeView_ConfiguratorStep_Message2" xml:space="preserve">
+        <value>Ne t'inquiète pas, si cela ne convient pas, tu peux toujours revenir en arrière pour choisir à nouveau.</value>
     </data>
-    <data name="WelcomeView_ModelProviderWrapper_openai_Description" xml:space="preserve">
-        <value>OpenAI est un fournisseur populaire de modèles d'IA, connu pour sa série GPT et autres. Vous pouvez vous inscrire et obtenir une clé API sur leur site officiel. Veuillez vérifier leur liste de pays et régions pris en charge.</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message1" xml:space="preserve">
+        <value>Bienvenue dans le mode prédéfini. Il te suffit de choisir le fournisseur de grand modèle que tu souhaites utiliser, puis d'obtenir une clé API et de la remplir, enfin, choisis le modèle pour commencer à l'utiliser !</value>
     </data>
-    <data name="WelcomeView_ModelProviderWrapper_anthropic_Description" xml:space="preserve">
-        <value>Anthropic se concentre sur le développement de modèles d'IA sûrs et fiables, avec pour produit phare la série Claude. Veuillez visiter leur site officiel pour les détails des modèles et les tarifs API.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_google_Description" xml:space="preserve">
-        <value>Google développe la série de modèles d'IA multimodaux Gemini. Vous pouvez obtenir une clé API via Google AI Studio ou Google Cloud Platform. Veuillez vérifier que le service est disponible dans votre région.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_deepseek_Description" xml:space="preserve">
-        <value>DeepSeek est une entreprise axée sur l'intelligence artificielle générale, avec des modèles performants en génération de code et traitement de la langue chinoise. Vous pouvez vous inscrire et commencer sur leur site officiel.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_moonshot_Description" xml:space="preserve">
-        <value>Moonshot AI est connu pour son assistant intelligent Kimi, qui prend en charge les entrées de texte long. L'entreprise offre une plateforme ouverte avec des services API. Pour plus de détails, veuillez visiter leur site officiel.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_openrouter_Description" xml:space="preserve">
-        <value>OpenRouter est un service d'agrégation et de routage d'API qui vous permet d'accéder à une variété de modèles de plusieurs fournisseurs (comme OpenAI, Anthropic, Google, etc.) via une interface unifiée. C'est très pratique pour tester et comparer différents modèles (y compris des modèles gratuits). Veuillez consulter leur documentation officielle pour les tarifs et les modèles disponibles.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_siliconflow_Description" xml:space="preserve">
-        <value>SiliconFlow est une plateforme d'inférence IA efficace qui prend en charge une large gamme de modèles open-source et propriétaires (y compris des modèles gratuits). Elle offre aux développeurs des services de déploiement et d'inférence de modèles flexibles et performants. Pour les modèles pris en charge et les tarifs spécifiques, veuillez visiter leur site officiel.</value>
-    </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message1" xml:space="preserve">
-        <value>Super ! Nous avons maintenant besoin d'une clé API pour commencer. Veuillez l'entrer ou la coller dans la zone de texte ci-dessous. Ensuite, cliquez sur &quot;Vérifier la clé API&quot;.</value>
-    </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message2" xml:space="preserve">
-        <value>Ne vous inquiétez pas, votre clé est hautement sécurisée. Elle est uniquement utilisée pour l'authentification avec le fournisseur de modèles, et je ne la lirai pas.</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message2" xml:space="preserve">
+        <value>Ne t'inquiète pas, ta clé sera stockée de manière sécurisée, je ne peux pas la lire.</value>
     </data>
     <data name="WelcomeView_SelectModelProviderStep_OfficialWebsiteHyperlinkButton_Content" xml:space="preserve">
         <value>👉 Site officiel</value>
@@ -782,25 +761,22 @@ Mon intelligence provient de puissants modèles de langage de grande taille (LLM
     <data name="WelcomeView_IntroStep_Message4" xml:space="preserve">
         <value>Si c'est votre première utilisation, je vous guiderai à travers la configuration initiale en trois étapes simples.</value>
     </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message3" xml:space="preserve">
-        <value>Si vous ne savez pas comment l'obtenir, vous pouvez consulter ce tutoriel que j'ai préparé pour vous :</value>
-    </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message4" xml:space="preserve">
-        <value>Indice chuchoté : Elle commence généralement par « sk- » ou « AI », alors ne la manquez pas !</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message3" xml:space="preserve">
+        <value>Si tu ne sais pas comment choisir ou comment obtenir une clé API, consulte les tutoriels ici.</value>
     </data>
     <data name="WelcomeView_EnterApiKeyStep_HowToGetApiKeyHyperlinkButton_Content" xml:space="preserve">
         <value>👉 Cliquez pour ouvrir</value>
     </data>
-    <data name="WelcomeView_VerifyApiKeyButton_Content" xml:space="preserve">
-        <value>Vérifier la clé API</value>
+    <data name="WelcomeView_CheckConnectivityButton_Content" xml:space="preserve">
+        <value>Tester la disponibilité de l'assistant</value>
     </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message5" xml:space="preserve">
-        <value>Vous pouvez également sélectionner un modèle ou conserver le modèle par défaut.</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message4" xml:space="preserve">
+        <value>Une fois ta sélection terminée, clique sur « Tester la disponibilité de l'assistant », je vérifierai si la configuration est correcte.</value>
     </data>
     <data name="WelcomeView_ApiKeyTextBox_Watermark" xml:space="preserve">
         <value>Entrez la clé API ici...</value>
     </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message6" xml:space="preserve">
+    <data name="WelcomeView_AssistantStep_PresetBased_Message5" xml:space="preserve">
         <value>🎉 Vérification réussie ! Passons à l'étape finale !</value>
     </data>
     <data name="WelcomeView_ShortcutStep_Message1" xml:space="preserve">
@@ -813,22 +789,22 @@ Mon intelligence provient de puissants modèles de langage de grande taille (LLM
         <value>Erreur d'authentification.</value>
     </data>
     <data name="WelcomeView_TelemetryStep_Message1" xml:space="preserve">
-        <value>Pour m'aider à m'améliorer, j'ai besoin d'activer la « Télémétrie » pour collecter des données anonymes. Ces données sont utilisées uniquement à des fins d'analyse et ne contiennent ni ne permettent d'inférer des informations personnellement identifiables vous concernant.</value>
+        <value>Pour m'aider à grandir, nous vous invitons à rejoindre le programme d'expérience utilisateur. Nous collecterons vos données d'utilisation, qui ne seront utilisées qu'à des fins d'analyse et ne contiendront ni ne permettront d'inférer des données personnelles vous concernant.</value>
     </data>
     <data name="WelcomeView_TelemetryStep_Message2" xml:space="preserve">
-        <value>Vous pouvez choisir d'envoyer uniquement les données nécessaires ; cette option n'affectera pas les fonctionnalités principales.</value>
+        <value>Si vous ne rejoignez pas, seules les données nécessaires seront envoyées. Soyez assuré que ce choix n'affectera pas les fonctionnalités essentielles.</value>
     </data>
     <data name="WelcomeView_SendOnlyNecessaryDataButton_Content" xml:space="preserve">
-        <value>Envoyer uniquement les données nécessaires</value>
+        <value>Ne pas rejoindre</value>
     </data>
     <data name="WelcomeView_EnableTelemetryButton_Content" xml:space="preserve">
-        <value>Activer la télémétrie</value>
+        <value>Rejoindre</value>
     </data>
     <data name="CommonSettings_DiagnosticData_Header" xml:space="preserve">
-        <value>Diagnostics</value>
+        <value>Rejoindre le programme d'expérience utilisateur</value>
     </data>
     <data name="CommonSettings_DiagnosticData_Description" xml:space="preserve">
-        <value>Pour nous aider à nous améliorer, nous avons besoin de la « télémétrie » pour collecter des données anonymes. Ces données sont utilisées uniquement à des fins d'analyse et ne contiennent ni ne permettent d'inférer des informations personnellement identifiables vous concernant. Vous pouvez choisir d'envoyer uniquement les données nécessaires ; cette option n'affectera pas les fonctionnalités principales.</value>
+        <value>Pour nous aider à nous améliorer, nous vous invitons à rejoindre le programme d'expérience utilisateur. Nous collecterons vos données d'utilisation, qui ne seront utilisées qu'à des fins d'analyse et ne contiendront ni ne permettront d'inférer des données personnelles vous concernant. Si vous ne rejoignez pas, seules les données nécessaires seront envoyées. Ce choix n'affectera pas les fonctionnalités essentielles.</value>
     </data>
     <data name="ChatWindowSettings_ShowChatStatistics_Header" xml:space="preserve">
         <value>Afficher les statistiques de chat</value>
@@ -987,8 +963,8 @@ Mon intelligence provient de puissants modèles de langage de grande taille (LLM
         <value>Spécifiez la description de l'assistant, utilisée uniquement à des fins d'affichage et de différenciation.</value>
     </data>
     <data name="CustomAssistant_SystemPrompt_Description" xml:space="preserve">
-        <value>L'invite système est envoyée au modèle par défaut au début de la conversation. Une invite bien conçue inclut une introduction, une description de la tâche et des informations contextuelles.
-Des espaces réservés peuvent être utilisés dans l'invite, entourés de {}, et seront remplacés par le contenu correspondant avant d'être envoyés au modèle.</value>
+        <value>Le prompt système sera envoyé au modèle au début de la conversation et sera mis à jour à chaque envoi de message.
+Le prompt peut contenir des espaces réservés, inclus dans {}, qui seront remplacés par le contenu correspondant avant d'être envoyés au modèle.</value>
     </data>
     <data name="CustomAssistant_SystemPrompt_Header" xml:space="preserve">
         <value>Invite du Système</value>
@@ -1009,16 +985,16 @@ Des espaces réservés peuvent être utilisés dans l'invite, entourés de {}, e
         <value>Non</value>
     </data>
     <data name="CustomAssistant_ModelProviderTemplate_Header" xml:space="preserve">
-        <value>Modèle de Fournisseur</value>
+        <value>Fournisseur de modèle</value>
     </data>
     <data name="CustomAssistant_ModelDefinitionTemplate_Header" xml:space="preserve">
-        <value>Modèle de Définition</value>
+        <value>Nom du modèle</value>
     </data>
     <data name="CustomAssistant_ModelDefinitionTemplate_Description" xml:space="preserve">
-        <value>Sélectionnez un modèle pour remplir automatiquement des options telles que « ID de modèle, Support d'entrée d'image, Support d'utilisation d'outils. » Vous pouvez modifier ces paramètres si nécessaire.</value>
+        <value>Choisissez un nom de modèle prédéfini.</value>
     </data>
     <data name="CustomAssistant_ModelProviderTemplate_Description" xml:space="preserve">
-        <value>Sélectionnez un modèle pour remplir automatiquement des options telles que « Adresse API et Schéma API. » Vous pouvez modifier ces paramètres si nécessaire.</value>
+        <value>Choisissez un fournisseur de modèle prédéfini.</value>
     </data>
     <data name="HandledSystemException_IOException" xml:space="preserve">
         <value>Une erreur d'E/S générale s'est produite. Cela peut être dû à un problème de lecture ou d'écriture d'un fichier.</value>
@@ -1278,14 +1254,11 @@ Des espaces réservés peuvent être utilisés dans l'invite, entourés de {}, e
     <data name="Windows_BuiltInChatPlugin_PowerShell_ExecuteScript_ScriptConsent_Header" xml:space="preserve">
         <value>Le script PowerShell suivant sera exécuté</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureVisualElementById_Header" xml:space="preserve">
+    <data name="BuiltInChatPlugin_VisualContext_CaptureVisualElementById_Header" xml:space="preserve">
         <value>Capturer l'élément UI</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureFullScreen_Header" xml:space="preserve">
-        <value>Capturer l'écran entier</value>
-    </data>
-    <data name="BuiltInChatPlugin_VisualTree_ExecuteVisualActionQueue_Header" xml:space="preserve">
-        <value>Opérer les éléments UI</value>
+    <data name="BuiltInChatPlugin_VisualContext_ExecuteVisualActions_Header" xml:space="preserve">
+        <value>Actions Automatisées</value>
     </data>
     <data name="Windows_BuiltInChatPlugin_Everything_SearchFiles_Header" xml:space="preserve">
         <value>Rechercher des fichiers via Everything</value>
@@ -1296,13 +1269,13 @@ Des espaces réservés peuvent être utilisés dans l'invite, entourés de {}, e
     <data name="ChatWindowViewModel_AddFile_FilePickerFileType_Documents" xml:space="preserve">
         <value>Document</value>
     </data>
-    <data name="ChatWindowViewModel_AddFile_FilePickerFileType_SupportedFiles" xml:space="preserve">
+    <data name="FilePickerFileType_SupportedFiles" xml:space="preserve">
         <value>Fichiers pris en charge</value>
     </data>
     <data name="ChatWindowViewModel_AddFile_FilePickerFileType_Images" xml:space="preserve">
         <value>Images</value>
     </data>
-    <data name="ChatWindowViewModel_FilePickerFileType_AllFiles" xml:space="preserve">
+    <data name="FilePickerFileType_AllFiles" xml:space="preserve">
         <value>Tous les fichiers</value>
     </data>
     <data name="ChatContext_Metadata_Topic_Header" xml:space="preserve">
@@ -1407,17 +1380,11 @@ Des espaces réservés peuvent être utilisés dans l'invite, entourés de {}, e
     <data name="BuiltInChatPlugin_FileSystem_EnsureFileSystemInfo_PathNotExist_ErrorMessage" xml:space="preserve">
         <value>Le chemin spécifié n'existe pas.</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureVisualElementById_Description" xml:space="preserve">
+    <data name="BuiltInChatPlugin_VisualContext_CaptureVisualElementById_Description" xml:space="preserve">
         <value>Capturez une capture d'écran d'un élément visuel.</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureFullScreen_Description" xml:space="preserve">
-        <value>Capturez une capture d'écran de l'ensemble de l'écran.</value>
-    </data>
-    <data name="BuiltInChatPlugin_VisualTree_ExecuteVisualActionQueue_Description" xml:space="preserve">
-        <value>Exécutez un ensemble d'actions d'automatisation de l'interface utilisateur telles que cliquer, taper ou envoyer des raccourcis.</value>
-    </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureFullScreen_NoScreenAvailable_ErrorMessage" xml:space="preserve">
-        <value>Aucun écran n'est disponible pour la capture.</value>
+    <data name="BuiltInChatPlugin_VisualContext_ExecuteVisualActions_Description" xml:space="preserve">
+        <value>Exécute un ensemble d'actions automatisées, telles que cliquer, saisir ou envoyer des raccourcis.</value>
     </data>
     <data name="BuiltInChatPlugin_WebBrowser_WebSearch_Description" xml:space="preserve">
         <value>Effectuez une recherche sur le web.</value>
@@ -1446,26 +1413,26 @@ Des espaces réservés peuvent être utilisés dans l'invite, entourés de {}, e
     <data name="BuiltInChatPlugin_WebBrowser_PuppeteerBrowserLaunchError_ErrorMessage" xml:space="preserve">
         <value>Échec du lancement du navigateur Puppeteer.</value>
     </data>
-    <data name="ElementPickerToolTip_TipTextBlock_Text" xml:space="preserve">
+    <data name="ScreenSelectionToolTip_TipText_Normal" xml:space="preserve">
         <value>Clic gauche pour sélectionner, clic droit ou Échap pour annuler
 Molette de défilement ou touches numériques pour changer de mode de sélection</value>
     </data>
-    <data name="ElementPickerToolTip_ScreenPickModeBadge_Content" xml:space="preserve">
+    <data name="ScreenSelectionMode_Screen" xml:space="preserve">
         <value>Écran</value>
     </data>
-    <data name="ElementPickerToolTip_WindowPickModeBadge_Content" xml:space="preserve">
+    <data name="ScreenSelectionMode_Window" xml:space="preserve">
         <value>Fenêtre</value>
     </data>
-    <data name="ElementPickerToolTip_ElementPickModeBadge_Content" xml:space="preserve">
+    <data name="ScreenSelectionMode_Element" xml:space="preserve">
         <value>Élément</value>
     </data>
-    <data name="ElementPickerToolTip_GetElementDescription_NoElement" xml:space="preserve">
+    <data name="ScreenSelectionToolTip_GetElementDescription_NoElement" xml:space="preserve">
         <value>Aucun</value>
     </data>
     <data name="Common_None" xml:space="preserve">
         <value>Aucun</value>
     </data>
-    <data name="ModelProviderSchema_OpenAI_ChatCompletions" xml:space="preserve">
+    <data name="ModelProviderSchema_OpenAI" xml:space="preserve">
         <value>OpenAI (Chat Completions)</value>
     </data>
     <data name="ModelProviderSchema_Anthropic" xml:space="preserve">
@@ -1618,7 +1585,7 @@ Molette de défilement ou touches numériques pour changer de mode de sélection
     <data name="ChatPluginPageViewModel_RemoveMcpPlugin_ConfirmationMessage" xml:space="preserve">
         <value>Êtes-vous sûr de vouloir supprimer “{0}” ?</value>
     </data>
-    <data name="ChatPluginPage_AddMCPPluginButton_Content" xml:space="preserve">
+    <data name="ChatPluginPage_AddMcpPluginButton_Content" xml:space="preserve">
         <value>Ajouter</value>
     </data>
     <data name="ChatPluginPage_CopyLogsButton_ToolTip" xml:space="preserve">
@@ -1696,7 +1663,7 @@ Molette de défilement ou touches numériques pour changer de mode de sélection
     <data name="DebugFeaturesControl_CreateDumpToast_Content" xml:space="preserve">
         <value>Veuillez patienter pendant que le vidage est en cours de création. Everywhere sera non réactif pendant ce temps.</value>
     </data>
-    <data name="ModelProviderSchema_OpenAI_Responses" xml:space="preserve">
+    <data name="ModelProviderSchema_OpenAIResponses" xml:space="preserve">
         <value>OpenAI (Responses API)</value>
     </data>
     <data name="MacOS_PermissionHelper_PleaseGrantAccessibilityPermission" xml:space="preserve">
@@ -1899,5 +1866,210 @@ Molette de défilement ou touches numériques pour changer de mode de sélection
     </data>
     <data name="CustomAssistant_ConfiguratorSelector_Header" xml:space="preserve">
         <value>Configurer le fournisseur d'IA</value>
+    </data>
+    <data name="ApiKeyComboBox_AddApiKey" xml:space="preserve">
+        <value>Ajouter une clé API</value>
+    </data>
+    <data name="ApiKeyComboBox_ManageApiKey" xml:space="preserve">
+        <value>Gérer les clés API</value>
+    </data>
+    <data name="ManageApiKeyForm_DeleteApiKeys_Dialog_Message" xml:space="preserve">
+        <value>Êtes-vous sûr de vouloir supprimer {0} clés API ? Cette action est irréversible !</value>
+    </data>
+    <data name="Common_Copied" xml:space="preserve">
+        <value>Copié</value>
+    </data>
+    <data name="ManageApiKeyForm_DeleteApiKey_Flyout_Content" xml:space="preserve">
+        <value>Êtes-vous sûr de vouloir supprimer ? Cette action est irréversible !</value>
+    </data>
+    <data name="ManageApiKeyForm_SecretKeyDataGridTemplateColumn_Header" xml:space="preserve">
+        <value>Clé</value>
+    </data>
+    <data name="ManageApiKeyForm_NameDataGridTextColumn_Header" xml:space="preserve">
+        <value>Nom</value>
+    </data>
+    <data name="CustomAssistantInformationForm_IconButton_ToolTip" xml:space="preserve">
+        <value>Cliquez pour changer l'icône</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_AdvancedConfiguratorModel_Header" xml:space="preserve">
+        <value>Mode avancé</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_AdvancedConfiguratorModel_Description" xml:space="preserve">
+        <value>Configurez librement tous les paramètres du modèle, compatible avec des modèles tiers</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_PresetBasedConfiguratorModel_Header" xml:space="preserve">
+        <value>Mode prédéfini</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_PresetBasedConfiguratorModel_Description" xml:space="preserve">
+        <value>Sélectionnez des modèles courants dans les préréglages et commencez rapidement</value>
+    </data>
+    <data name="CreateApiKeyForm_NameTextBox_Label" xml:space="preserve">
+        <value>Nom (pour affichage et distinction uniquement)</value>
+    </data>
+    <data name="CreateApiKeyForm_SecretKeyTextBox_Label" xml:space="preserve">
+        <value>Clé</value>
+    </data>
+    <data name="ManageApiKeyForm_AddApiKeyButton_Content" xml:space="preserve">
+        <value>Ajouter</value>
+    </data>
+    <data name="ManageApiKeyForm_DeleteApiKeysButton_Content" xml:space="preserve">
+        <value>Supprimer les éléments sélectionnés</value>
+    </data>
+    <data name="WelcomeView_ModelProviderHyperlinkButton_Content" xml:space="preserve">
+        <value>Cliquez ici pour voir</value>
+    </data>
+    <data name="WelcomeView_AssistantStep_Advanced_Message1" xml:space="preserve">
+        <value>Bienvenue dans le mode avancé. Vous pouvez configurer vous-même les modèles tiers pris en charge par l'API.</value>
+    </data>
+    <data name="WelcomeView_AssistantStep_Advanced_Message2" xml:space="preserve">
+        <value>Veuillez noter que je ne peux pas garantir une compatibilité parfaite avec tous les modèles tiers.</value>
+    </data>
+    <data name="AdvancedModelProviderConfigurator_InvalidEndpoint" xml:space="preserve">
+        <value>Doit être une URL valide commençant par http:// ou https://</value>
+    </data>
+    <data name="VisualElementType_Spinner" xml:space="preserve">
+        <value>Liste déroulante</value>
+    </data>
+    <data name="VisualElementType_Splitter" xml:space="preserve">
+        <value>Séparateur</value>
+    </data>
+    <data name="VisualElementType_StatusBar" xml:space="preserve">
+        <value>Barre d'état</value>
+    </data>
+    <data name="VisualElementType_ToolBar" xml:space="preserve">
+        <value>Barre d'outils</value>
+    </data>
+    <data name="VisualElementType_Header" xml:space="preserve">
+        <value>En-tête</value>
+    </data>
+    <data name="VisualElementType_HeaderItem" xml:space="preserve">
+        <value>Élément d'en-tête</value>
+    </data>
+    <data name="ApiKey_EmptyName" xml:space="preserve">
+        <value>(vide)</value>
+    </data>
+    <data name="ChatWindowSettings_AlwaysStartNewChat_Header" xml:space="preserve">
+        <value>Toujours commencer un nouveau chat</value>
+    </data>
+    <data name="ChatWindowSettings_AlwaysStartNewChat_Description" xml:space="preserve">
+        <value>Démarrez automatiquement une nouvelle session lorsque vous invoquez l'application via un raccourci, en contournant la conversation précédente.</value>
+    </data>
+    <data name="ChatPluginPage_ImportMcpPluginButton_ToolTip" xml:space="preserve">
+        <value>Importer depuis JSON</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_DialogTitle" xml:space="preserve">
+        <value>Importer le plugin MCP</value>
+    </data>
+    <data name="McpImportForm_Description" xml:space="preserve">
+        <value>Collez votre configuration MCP JSON ci-dessous, ou importez-la depuis un fichier local.</value>
+    </data>
+    <data name="McpImportForm_OpenButton_Content" xml:space="preserve">
+        <value>Ouvrir</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_SuccessToast_Title" xml:space="preserve">
+        <value>{0} plugins MCP importés</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_FailedToast_Title" xml:space="preserve">
+        <value>Échec de l'importation des plugins MCP</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_NotFoundToast_Title" xml:space="preserve">
+        <value>Aucun plugin MCP valide trouvé</value>
+    </data>
+    <data name="McpTransportConfiguration_DefaultName" xml:space="preserve">
+        <value>Serveur MCP</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_PartialSuccessToast_Title" xml:space="preserve">
+        <value>{0} plugins importés avec succès, {1} échoués</value>
+    </data>
+    <data name="Application_TrayIcon_Menu_OpenChatWindow" xml:space="preserve">
+        <value>Ouvrir la fenêtre de chat</value>
+    </data>
+    <data name="Linux_NativeHelper_RestartAsAdministrator_DesktopNotification" xml:space="preserve">
+        <value>Sous Linux, l'application fonctionne généralement avec des privilèges utilisateur. Pour utiliser des privilèges administratifs, veuillez redémarrer l'application avec sudo.</value>
+    </data>
+    <data name="Linux_ShortcutListener_Register_FailedToGrabHotkey" xml:space="preserve">
+        <value>Échec de l'enregistrement du raccourci. Cette combinaison de touches peut déjà être utilisée.</value>
+    </data>
+    <data name="ScreenSelectionMode_Free" xml:space="preserve">
+        <value>Libre</value>
+    </data>
+    <data name="ScreenSelectionToolTip_TipText_Free" xml:space="preserve">
+        <value>Maintenez le bouton gauche enfoncé pour sélectionner, appuyez sur le bouton droit ou sur Échap pour quitter
+Utilisez la molette ou les touches numériques pour changer de mode de sélection</value>
+    </data>
+    <data name="ChatWindow_ChatInputArea_AddAttachmentMenuItems_Screenshot" xml:space="preserve">
+        <value>Capture d'écran</value>
+    </data>
+    <data name="ChatWindowSettings_AutomaticallyAddTextSelection_Header" xml:space="preserve">
+        <value>Ajouter Sélection de Texte Automatiquement</value>
+    </data>
+    <data name="ChatWindowSettings_AutomaticallyAddTextSelection_Description" xml:space="preserve">
+        <value>Une fois activé, le texte sélectionné sera automatiquement ajouté en tant que pièce jointe.</value>
+    </data>
+    <data name="BuiltInChatPlugin_VisualContext_ListWindows_Header" xml:space="preserve">
+        <value>Lister les Fenêtres</value>
+    </data>
+    <data name="BuiltInChatPlugin_VisualContext_ListWindows_Description" xml:space="preserve">
+        <value>Liste toutes les fenêtres sur l'écran.</value>
+    </data>
+    <data name="ExperimentalBadge_Content" xml:space="preserve">
+        <value>Expérimental</value>
+    </data>
+    <data name="ExperimentalBadge_ToolTip" xml:space="preserve">
+        <value>Cette fonctionnalité est expérimentale et peut entraîner des erreurs et des résultats inattendus.</value>
+    </data>
+    <data name="CommonSettings_IsUserStartupEnabled_Header" xml:space="preserve">
+        <value>Démarrer au Lancement</value>
+    </data>
+    <data name="CommonSettings_IsUserStartupEnabled_Description" xml:space="preserve">
+        <value>Everywhere se lancera automatiquement au démarrage.</value>
+    </data>
+    <data name="ModelProviderSchema_DeepSeek" xml:space="preserve">
+        <value>DeepSeek</value>
+    </data>
+    <data name="ChatWindow_ChatInputArea_SettingsMenuItems_MoreSettings" xml:space="preserve">
+        <value>Plus de Paramètres</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_Header" xml:space="preserve">
+        <value>fd-find</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_Description" xml:space="preserve">
+        <value>Rechercher des fichiers sur votre ordinateur avec fd-find (un outil de recherche de fichiers local haute performance). Cet outil nécessite l'installation de fd-find pour être utilisé.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_SearchFiles_Header" xml:space="preserve">
+        <value>Rechercher des fichiers</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_SearchFiles_Description" xml:space="preserve">
+        <value>Rechercher des fichiers ou des répertoires sous Linux en utilisant fd-find.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_SearchFiles_DetailMessage" xml:space="preserve">
+        <value>{0} fichiers trouvés</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_Description" xml:space="preserve">
+        <value>Fournit la capacité d'exécuter des scripts bash, permettant une interaction directe avec le système. Cependant, cela comporte des risques, pouvant entraîner la suppression accidentelle de fichiers ou des plantages système.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_DenyMessage" xml:space="preserve">
+        <value>L'utilisateur a refusé la permission d'exécuter le script bash.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_ErrorMessage" xml:space="preserve">
+        <value>Échec de l'exécution du script bash : {0}</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_Header" xml:space="preserve">
+        <value>Exécuter le Script</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_ScriptConsent_Header" xml:space="preserve">
+        <value>Le script bash suivant va être exécuté</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_Header" xml:space="preserve">
+        <value>Bash Shell</value>
+    </data>
+    <data name="HandledSystemException_Serialization" xml:space="preserve">
+        <value>Erreur lors de l'analyse des données.</value>
+    </data>
+    <data name="HandledSystemException_FunctionInvoking" xml:space="preserve">
+        <value>Erreur lors de l'appel de l'outil.</value>
+    </data>
+    <data name="ChatWindowViewModel_ExportMarkdown_ReasoningOutput" xml:space="preserve">
+        <value>Réflexion Approfondie</value>
     </data>
 </root>

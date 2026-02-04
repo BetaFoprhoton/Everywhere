@@ -15,6 +15,7 @@ using Everywhere.Utilities;
 using LiveMarkdown.Avalonia;
 using Lucide.Avalonia;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using ShadUI;
 
 namespace Everywhere.Views;
@@ -34,10 +35,19 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
         private set => SetAndRaise(IsOpenedProperty, ref field, value);
     }
 
-    public static readonly StyledProperty<bool> IsWindowPinnedProperty =
-        AvaloniaProperty.Register<ChatWindow, bool>(nameof(IsWindowPinned));
+    /// <summary>
+    /// Defines the <see cref="IsWindowPinned"/> property.
+    /// </summary>
+    public static readonly StyledProperty<bool?> IsWindowPinnedProperty =
+        AvaloniaProperty.Register<ChatWindow, bool?>(nameof(IsWindowPinned));
 
-    public bool IsWindowPinned
+    /// <summary>
+    /// Gets or sets a value indicating whether the window is pinned.
+    /// true: pinned and on top
+    /// null: pinned but not on top
+    /// false: not pinned, on top. hidden when unfocused
+    /// </summary>
+    public bool? IsWindowPinned
     {
         get => GetValue(IsWindowPinnedProperty);
         set => SetValue(IsWindowPinnedProperty, value);
@@ -54,6 +64,11 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
     /// Indicates whether the window has been resized by the user.
     /// </summary>
     private bool _isUserResized;
+
+    /// <summary>
+    /// Indicates whether the window can be closed.
+    /// </summary>
+    private bool _canCloseWindow;
 
     public ChatWindow(
         ILauncher launcher,
@@ -72,10 +87,10 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
         ViewModel.PropertyChanged += HandleViewModelPropertyChanged;
         ChatInputArea.TextChanged += HandleChatInputAreaTextChanged;
         ChatInputArea.PastingFromClipboard += HandleChatInputAreaPastingFromClipboard;
-        
+
         SetupDragDropHandlers();
     }
-    
+
     private void SetupDragDropHandlers()
     {
         DragDrop.SetAllowDrop(this, true);
@@ -95,7 +110,6 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
         ApplyTemplate();
 
         _windowHelper.SetCloaked(this, true);
-        Topmost = true;
 
         // Setup window placement saving after initialization
         this[SaveWindowPlacementAssist.KeyProperty] = nameof(ChatWindow);
@@ -143,9 +157,10 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
         }
         else if (change.Property == IsWindowPinnedProperty)
         {
-            var value = change.NewValue is true;
+            var value = change.NewValue as bool?;
             _persistentState.IsChatWindowPinned = value;
-            ShowInTaskbar = value;
+            ShowInTaskbar = value is true or null;
+            Topmost = value is not null; // false: topmost, null: normal, true: topmost
             _windowHelper.SetCloaked(this, false); // Uncloak when pinned state changes to ensure visibility
         }
     }
@@ -221,7 +236,7 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
     {
         base.OnLostFocus(e);
 
-        if (!ViewModel.IsPickingFiles && !IsActive && !IsWindowPinned && !_windowHelper.AnyModelDialogOpened(this))
+        if (!ViewModel.IsPickingFiles && !IsActive && IsWindowPinned is false && !_windowHelper.AnyModelDialogOpened(this))
         {
             IsOpened = false;
         }
@@ -231,7 +246,7 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
     {
         return new NoneAutomationPeer(this); // Disable automation peer to avoid being detected by self
     }
-    
+
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
@@ -266,7 +281,7 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
                 }
             }
 
-            ShowInTaskbar = IsWindowPinned;
+            ShowInTaskbar = IsWindowPinned is true or null;
             _windowHelper.SetCloaked(this, false);
             ChatInputArea.Focus();
         }
@@ -303,6 +318,7 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
         // otherwise, Windows will say "Everywhere is preventing shutdown"
         if (e.CloseReason is WindowCloseReason.ApplicationShutdown or WindowCloseReason.OSShutdown)
         {
+            _canCloseWindow = true;
             base.OnClosing(e);
             return;
         }
@@ -318,11 +334,12 @@ public partial class ChatWindow : ReactiveShadWindow<ChatWindowViewModel>, IReac
     {
         base.OnClosed(e);
 
-        ServiceLocator.Resolve<ILogger<ChatWindow>>().LogError("Chat window was closed unexpectedly. This should not happen.");
+        if (!_canCloseWindow)
+            Log.ForContext<ChatWindow>().Error("Chat window was closed unexpectedly. This should not happen.");
     }
 
     [RelayCommand]
-    private Task LaunchInlineHyperlink(InlineHyperlinkClickedEventArgs e)
+    private Task LaunchLink(LinkClickedEventArgs e)
     {
         // currently we only support http(s) links for safety reasons
         return e.HRef is not { Scheme: "http" or "https" } uri ? Task.CompletedTask : _launcher.LaunchUriAsync(uri);

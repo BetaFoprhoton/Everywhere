@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Everywhere.Core", "src\Ever
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Everywhere.Windows", "src\Everywhere.Windows\Everywhere.Windows.csproj", "{ABC31E74-02FF-46EB-B3B2-4E6AE43B456C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Everywhere.Linux", "src\Everywhere.Linux\Everywhere.Linux.csproj", "{8B6851BF-B739-4979-89C3-01C7F82083F8}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Everywhere.Mac", "src\Everywhere.Mac\Everywhere.Mac.csproj", "{97F60D77-44F8-4297-8C45-B1B28C120F5B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3DA99C4E-89E3-4049-9C22-0A7EC60D83D8}"
@@ -62,9 +64,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{02EA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{2F651C37-C3A7-41FF-8A36-0A7DB0DED09D}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\release.yml = .github\workflows\release.yml
 		.github\workflows\close-stale-issues.yml = .github\workflows\close-stale-issues.yml
 		.github\workflows\sync-i18n.yml = .github\workflows\sync-i18n.yml
+		.github\workflows\linux-release.yml = .github\workflows\linux-release.yml
+		.github\workflows\macos-release.yml = .github\workflows\macos-release.yml
+		.github\workflows\windows-release.yml = .github\workflows\windows-release.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{30A74410-E803-4C56-BE95-C8E1BE690C7A}"
@@ -112,6 +116,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Connectors.Google", "3rd\semantic-kernel-patch\Connectors.Google\Connectors.Google.csproj", "{62900E41-0B12-4AD8-A71A-2D8C2C4D033A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins.Web", "3rd\semantic-kernel-patch\Plugins.Web\Plugins.Web.csproj", "{521A03C8-BB0D-43AF-92DF-FAD510B91C24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Everywhere.Cloud", "src\Everywhere.Cloud\Everywhere.Cloud.csproj", "{6D8E926D-4F87-42E0-ADBB-A5B2BEA8E1CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Everywhere.Abstractions.Tests", "tests\Everywhere.Abstractions.Tests\Everywhere.Abstractions.Tests.csproj", "{9561A317-E9E5-4B18-9A3B-17D9BE54592A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anthropic", "3rd\anthropic-sdk-csharp-patch\src\Anthropic\Anthropic.csproj", "{C3305CE7-8C65-4856-A3BB-32C57BD607CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -183,6 +193,10 @@ Global
 		{41784BA1-16E0-4BB8-BC99-0C5AA4F1DEEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41784BA1-16E0-4BB8-BC99-0C5AA4F1DEEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41784BA1-16E0-4BB8-BC99-0C5AA4F1DEEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B6851BF-B739-4979-89C3-01C7F82083F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B6851BF-B739-4979-89C3-01C7F82083F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B6851BF-B739-4979-89C3-01C7F82083F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B6851BF-B739-4979-89C3-01C7F82083F8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{97F60D77-44F8-4297-8C45-B1B28C120F5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{97F60D77-44F8-4297-8C45-B1B28C120F5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97F60D77-44F8-4297-8C45-B1B28C120F5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -207,6 +221,18 @@ Global
 		{521A03C8-BB0D-43AF-92DF-FAD510B91C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{521A03C8-BB0D-43AF-92DF-FAD510B91C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{521A03C8-BB0D-43AF-92DF-FAD510B91C24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D8E926D-4F87-42E0-ADBB-A5B2BEA8E1CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D8E926D-4F87-42E0-ADBB-A5B2BEA8E1CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D8E926D-4F87-42E0-ADBB-A5B2BEA8E1CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D8E926D-4F87-42E0-ADBB-A5B2BEA8E1CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9561A317-E9E5-4B18-9A3B-17D9BE54592A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9561A317-E9E5-4B18-9A3B-17D9BE54592A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9561A317-E9E5-4B18-9A3B-17D9BE54592A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9561A317-E9E5-4B18-9A3B-17D9BE54592A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3305CE7-8C65-4856-A3BB-32C57BD607CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3305CE7-8C65-4856-A3BB-32C57BD607CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3305CE7-8C65-4856-A3BB-32C57BD607CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3305CE7-8C65-4856-A3BB-32C57BD607CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -229,6 +255,8 @@ Global
 		{1F3E1A58-51BB-46BD-815D-966D1BF0AB21} = {53D93485-1520-4753-81CE-DA1CFF334372}
 		{62900E41-0B12-4AD8-A71A-2D8C2C4D033A} = {1F3E1A58-51BB-46BD-815D-966D1BF0AB21}
 		{521A03C8-BB0D-43AF-92DF-FAD510B91C24} = {1F3E1A58-51BB-46BD-815D-966D1BF0AB21}
+		{9561A317-E9E5-4B18-9A3B-17D9BE54592A} = {9933B251-881A-4638-8995-EB7CC5370002}
+		{C3305CE7-8C65-4856-A3BB-32C57BD607CD} = {53D93485-1520-4753-81CE-DA1CFF334372}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {83CB65B8-011F-4ED7-BCD3-A6CFA935EF7E}

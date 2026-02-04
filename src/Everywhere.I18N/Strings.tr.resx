@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Turkish (Turkey) -->
 <root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
@@ -444,7 +445,7 @@
     <data name="ChatWindow_HistoryAction_Rename" xml:space="preserve">
         <value>Yeniden Adlandır</value>
     </data>
-    <data name="ChatWindow_HistoryAction_Delete" xml:space="preserve">
+    <data name="Common_Delete" xml:space="preserve">
         <value>Sil</value>
     </data>
     <data name="AboutPage_WelcomePage" xml:space="preserve">
@@ -523,10 +524,10 @@
         <value>Değer ne kadar yüksekse kelime hazinesi o kadar çeşitli ve zengin olur; değer ne kadar düşükse dil daha basit ve doğrudan olur. Bu ayar yalnızca bazı modeller için etkilidir. Hata alırsanız, varsayılan değeri geri yüklemeyi deneyin.</value>
     </data>
     <data name="CustomAssistant_Endpoint_Header" xml:space="preserve">
-        <value>API URL'si</value>
+        <value>URL</value>
     </data>
     <data name="CustomAssistant_Endpoint_Description" xml:space="preserve">
-        <value>Ne yapacağınızı bilmiyorsanız varsayılan değeri bırakın. 'http(s)://' ile başlamalıdır.</value>
+        <value>http:// veya https:// ile başlamalıdır.</value>
     </data>
     <data name="CustomAssistant_ApiKey_Header" xml:space="preserve">
         <value>API Anahtarı</value>
@@ -538,22 +539,22 @@
         <value>Görüntü Girişi Desteği</value>
     </data>
     <data name="CustomAssistant_IsImageInputSupported_Description" xml:space="preserve">
-        <value>Sohbet bağlamında resim yükleyebilirsiniz. Ne yaptığınızı bilmiyorsanız varsayılan değeri koruyun. Model görüntü girişini desteklemiyorsa bu özelliği etkinleştirmek hatalara yol açabilir.</value>
+        <value>Model görüntü girişi destekler. Model desteklemiyorsa, bu seçeneği açmak sohbet sırasında hatalara neden olabilir.</value>
     </data>
     <data name="CustomAssistant_IsFunctionCallingSupported_Header" xml:space="preserve">
         <value>Araç Kullanım Desteği</value>
     </data>
     <data name="CustomAssistant_IsFunctionCallingSupported_Description" xml:space="preserve">
-        <value>Model, sohbet bağlamında yapılandırdığınız araçları kullanabilir. Ne yaptığınızı bilmiyorsanız varsayılan değeri koruyun. Model fonksiyon çağrısını desteklemiyorsa bu özelliği etkinleştirmek hatalara yol açabilir.</value>
+        <value>Model yapılandırılmış araçları kullanmayı destekler. Model desteklemiyorsa, bu seçeneği açmak sohbet sırasında hatalara neden olabilir.</value>
     </data>
     <data name="CustomAssistant_IsDeepThinkingSupported_Description" xml:space="preserve">
-        <value>Model yanıtlar öncesinde düşünebilir. Ne yaptığınızı bilmiyorsanız varsayılan değeri koruyun. Model derin düşünmeyi desteklemiyorsa bu özelliği etkinleştirmek hatalara yol açabilir.</value>
+        <value>Model önce düşünmeyi sonra yanıt vermeyi destekler. Model desteklemiyorsa, bu seçeneği açmak sohbet sırasında hatalara neden olabilir.</value>
     </data>
     <data name="CustomAssistant_IsDeepThinkingSupported_Header" xml:space="preserve">
         <value>Derin Düşünme Desteği</value>
     </data>
     <data name="CustomAssistant_MaxTokens_Description" xml:space="preserve">
-        <value>Tek bir sohbetin maksimum bağlam uzunluğu. Ne yaptığınızı bilmiyorsanız varsayılan değeri koruyun. Bu değeri varsayılanın üzerinde ayarlamak hatalara yol açabilir.</value>
+        <value>Sohbetin maksimum bağlam uzunluğu. Bu, görsel ağaç oluşturma stratejisini etkiler, mümkünse gerçek bir değer olarak ayarlayın.</value>
     </data>
     <data name="CustomAssistant_MaxTokens_Header" xml:space="preserve">
         <value>Maksimum Bağlam Uzunluğu (max_tokens)</value>
@@ -565,7 +566,7 @@
         <value>API Şeması</value>
     </data>
     <data name="CustomAssistant_Schema_Description" xml:space="preserve">
-        <value>API şemasını seçin. Ne yapacağınızı bilmiyorsanız varsayılan değeri bırakın.</value>
+        <value>API protokolünü seçin. Bu seçeneğin her zaman modelle ilişkili olmadığını unutmayın; örneğin, Gemini OpenAI uyumlu protokol sunar, detaylar için ilgili modelin resmi kullanım kılavuzuna bakın.</value>
     </data>
     <data name="CommonSettings_IsStartupEnabled_Header" xml:space="preserve">
         <value>Başlangıçta Çalıştır</value>
@@ -634,7 +635,7 @@
         <value>Model Kimliği</value>
     </data>
     <data name="CustomAssistant_ModelId_Description" xml:space="preserve">
-        <value>API çağrılarında kullanılan model kimliği (örneğin gpt-4o). Ne olduğunu bilmiyorsanız varsayılan değeri koruyun.</value>
+        <value>API çağrıları için model kimliği, örneğin gpt-4o.</value>
     </data>
     <data name="ChatPluginPage_Title" xml:space="preserve">
         <value>Sohbet Eklentileri</value>
@@ -690,11 +691,11 @@
     <data name="ChatPluginPage_TabItem_Functions_Header" xml:space="preserve">
         <value>Fonksiyonlar</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_Header" xml:space="preserve">
-        <value>Görsel Ağ</value>
+    <data name="BuiltInChatPlugin_VisualContext_Header" xml:space="preserve">
+        <value>Görsel Bağlam</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_Description" xml:space="preserve">
-        <value>Ekrandaki kullanıcı arayüzü öğelerini algılamayı ve manipüle etmeyi sağlar.</value>
+    <data name="BuiltInChatPlugin_VisualContext_Description" xml:space="preserve">
+        <value>Ekran içeriğini algılama ve işlem yapma yeteneği sağlar.</value>
     </data>
     <data name="ChangeLogView_ViewOnGitHubHyperlinkButton_Content" xml:space="preserve">
         <value>GitHub'da Görüntüle</value>
@@ -729,38 +730,18 @@
     <data name="WelcomeView_NextStepButton_Content" xml:space="preserve">
         <value>Sonraki adım</value>
     </data>
-    <data name="WelcomeView_SelectModelProviderStep_Message1" xml:space="preserve">
-        <value>Tamam, Şimdi Adım 1'e geçelim: Benim için bir &quot;beyin&quot; seçmek! Aklım güçlü Büyük Dil Modelleri (LLM'ler) tarafından sağlanıyor; aşağıda listelenen özel hizmet sağlayıcıları bu modelleri sunuyor. Herhangi birini seçerek beni güçlendirebilirsiniz.</value>
+    <data name="WelcomeView_ConfiguratorStep_Message1" xml:space="preserve">
+        <value>Şimdi ilk adımı atıyoruz: benim için bir “beyin” seç! 
+Zekam büyük dil modeli tarafından sağlanıyor, senin yardımınla yapılandırmam gerekiyor. Sana birkaç yapılandırma modu sunuyorum, en uygun olanı seçebilirsin.</value>
     </data>
-    <data name="WelcomeView_SelectModelProviderStep_Message2" xml:space="preserve">
-        <value>Elinizde olan veya kullanmayı planladığınız bir sağlayıcı seçin; size hakkında daha fazla bilgi vereceğim. Endişelenmeyin, Everywhere yalnızca bağımsız bir istemci ve resmi olarak onlarla ilişkilendirilmemiştir.</value>
+    <data name="WelcomeView_ConfiguratorStep_Message2" xml:space="preserve">
+        <value>Endişelenme, eğer uygun değilse, istediğin zaman geri dönüp yeniden seçebilirsin.</value>
     </data>
-    <data name="WelcomeView_ModelProviderWrapper_openai_Description" xml:space="preserve">
-        <value>OpenAI, GPT serisi ve diğerleriyle tanınan popüler bir yapay zeka modeli sağlayıcısıdır. Resmi web sitesinde kaydolabilir ve bir API anahtarı alabilirsiniz. Desteklenen ülkeler ve bölgeler listesini kontrol edin.</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message1" xml:space="preserve">
+        <value>Ön ayar moduna hoş geldin. Sadece kullanmak istediğin büyük model sağlayıcısını seç, ardından API anahtarını al ve doldur, son olarak modeli seçerek kullanmaya başlayabilirsin!</value>
     </data>
-    <data name="WelcomeView_ModelProviderWrapper_anthropic_Description" xml:space="preserve">
-        <value>Anthropic, güvenli ve güvenilir yapay zeka modelleri geliştirmeye odaklanır; başlıca ürünü Claude serisidir. Model ayrıntıları ve API fiyatlandırması için resmi web sitesini ziyaret edin.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_google_Description" xml:space="preserve">
-        <value>Google, çoklu modalite yapay zeka modelleri Gemini serisini geliştirir. Google AI Studio veya Google Cloud Platform üzerinden bir API anahtarı alabilirsiniz. Hizmetin bölgenizde mevcut olup olmadığını doğrulayın.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_deepseek_Description" xml:space="preserve">
-        <value>DeepSeek, genel yapay zeka üzerine odaklanan bir şirkettir; kod üretimi ve Çince dil işleme alanlarında iyi performans gösteren modelleri vardır. Resmi web sitesinde kaydolabilir ve başlayabilirsiniz.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_moonshot_Description" xml:space="preserve">
-        <value>Moonshot AI, uzun metin girişlerini destekleyen Kimi akıllı asistanıyla tanınır. Şirket, API hizmetleri sunan açık bir platform sunar. Daha fazla ayrıntı için resmi web sitesini ziyaret edin.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_openrouter_Description" xml:space="preserve">
-        <value>OpenRouter, birden fazla sağlayıcıdan (OpenAI, Anthropic, Google vb.) çeşitli modellere tek bir birleşik arayüz üzerinden erişmenizi sağlayan API toplama ve yönlendirme hizmetidir. Farklı modelleri (ücretsiz modeller dahil) test etmek ve karşılaştırmak için çok uygundur. Fiyatlandırma ve mevcut modeller için resmi belgelerine bakın.</value>
-    </data>
-    <data name="WelcomeView_ModelProviderWrapper_siliconflow_Description" xml:space="preserve">
-        <value>SiliconFlow, açık kaynak ve özelleştirilmiş modelleri (ücretsiz modeller dahil) destekleyen verimli bir yapay zeka çıkarım platformudur. Geliştiricilere esnek, yüksek performanslı model dağıtımı ve çıkarım hizmetleri sunar. Desteklenen belirli modeller ve fiyatlandırma için resmi web sitesini ziyaret edin.</value>
-    </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message1" xml:space="preserve">
-        <value>Harika! Şimdi başlamak için bir API anahtarına ihtiyacımız var. Lütfen aşağıdaki metin kutusuna girin veya yapıştırın. Ardından &quot;API Anahtarı Doğrula&quot;ya tıklayın.</value>
-    </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message2" xml:space="preserve">
-        <value>Endişelenmeyin, anahtarınız çok güvenli. Sadece model sağlayıcısıyla kimlik doğrulama için kullanılır ve ben onu okumam.</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message2" xml:space="preserve">
+        <value>Endişelenme, anahtarın şifrelenmiş olarak saklanacak, ben okuyamam.</value>
     </data>
     <data name="WelcomeView_SelectModelProviderStep_OfficialWebsiteHyperlinkButton_Content" xml:space="preserve">
         <value>👉 Resmi web sitesi</value>
@@ -777,25 +758,22 @@
     <data name="WelcomeView_IntroStep_Message4" xml:space="preserve">
         <value>Bu ilk kez kullanıyorsanız, yeni kurulum adımlarını üç basit adımda yönlendireceğim.</value>
     </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message3" xml:space="preserve">
-        <value>Eğer nasıl elde edeceğinizi bilmiyorsanız, sizin için hazırladığım bu öğreticiyi inceleyebilirsiniz:</value>
-    </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message4" xml:space="preserve">
-        <value>Fısıldanmış ipucu: Genellikle &quot;sk-&quot; veya &quot;AI,&quot; ile başlar, bu yüzden kaçırmayın!</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message3" xml:space="preserve">
+        <value>Eğer nasıl seçeceğin veya API anahtarını nasıl alacağın hakkında bir fikrin yoksa, buradaki eğitime bak.</value>
     </data>
     <data name="WelcomeView_EnterApiKeyStep_HowToGetApiKeyHyperlinkButton_Content" xml:space="preserve">
         <value>👉 Tıklayarak aç</value>
     </data>
-    <data name="WelcomeView_VerifyApiKeyButton_Content" xml:space="preserve">
-        <value>API Anahtarı Doğrula</value>
+    <data name="WelcomeView_CheckConnectivityButton_Content" xml:space="preserve">
+        <value>Asistanın kullanılabilirliğini test et</value>
     </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message5" xml:space="preserve">
-        <value>Ayrıca bir model seçebilir veya varsayılanı koruyabilirsiniz.</value>
+    <data name="WelcomeView_AssistantStep_PresetBased_Message4" xml:space="preserve">
+        <value>Seçimi tamamladıktan sonra, “Asistanın kullanılabilirliğini test et” butonuna tıkla, yapılandırmanın doğru olup olmadığını kontrol edeceğim.</value>
     </data>
     <data name="WelcomeView_ApiKeyTextBox_Watermark" xml:space="preserve">
         <value>API anahtarını buraya girin...</value>
     </data>
-    <data name="WelcomeView_EnterApiKeyStep_Message6" xml:space="preserve">
+    <data name="WelcomeView_AssistantStep_PresetBased_Message5" xml:space="preserve">
         <value>🎉 Doğrulama başarılı! Son adım için ilerleyelim!</value>
     </data>
     <data name="WelcomeView_ShortcutStep_Message1" xml:space="preserve">
@@ -808,22 +786,22 @@
         <value>Kimlik doğrulama hatası.</value>
     </data>
     <data name="WelcomeView_TelemetryStep_Message1" xml:space="preserve">
-        <value>Benim gelişmemi desteklemek için “Telemetri”yi etkinleştirerek anonim veri toplamam gerekir. Bu veriler yalnızca analiz amaçlıdır ve sizinle ilgili kişisel tanımlanabilir bilgi içermez veya çıkarılmasına izin vermez.</value>
+        <value>Büyümeme yardımcı olmak için sizi kullanıcı deneyimi programına katılmaya davet ediyoruz. Kullanım verilerinizi toplayacağız, bu veriler yalnızca analiz için kullanılacak ve sizinle ilgili herhangi bir kişisel bilgi içermeyecek veya çıkarım yapılamayacaktır.</value>
     </data>
     <data name="WelcomeView_TelemetryStep_Message2" xml:space="preserve">
-        <value>Yalnızca gerekli verileri göndermeyi seçebilirsiniz; bu seçenek temel işlevselliği etkilemeyecektir.</value>
+        <value>Katılmazsanız yalnızca gerekli veriler gönderilecektir. Lütfen bu seçimin temel işlevleri etkilemeyeceğinden emin olun.</value>
     </data>
     <data name="WelcomeView_SendOnlyNecessaryDataButton_Content" xml:space="preserve">
-        <value>Sadece gerekli veriyi gönder</value>
+        <value>Katılmıyorum</value>
     </data>
     <data name="WelcomeView_EnableTelemetryButton_Content" xml:space="preserve">
-        <value>Telemetriyi etkinleştir</value>
+        <value>Katılıyorum</value>
     </data>
     <data name="CommonSettings_DiagnosticData_Header" xml:space="preserve">
-        <value>Tanı Verileri</value>
+        <value>Kullanıcı deneyimi programına katılın</value>
     </data>
     <data name="CommonSettings_DiagnosticData_Description" xml:space="preserve">
-        <value>Bizim gelişmemizi desteklemek için anonim veri toplamak üzere “telemetri”ye ihtiyacımız var. Bu veriler yalnızca analiz amaçlıdır ve sizinle ilgili kişisel tanımlanabilir bilgi içermez veya çıkarılmasına izin vermez. Yalnızca gerekli veriyi göndermeyi seçebilirsiniz; bu seçenek temel işlevselliği etkilemeyecektir.</value>
+        <value>Gelişmemize yardımcı olmak için sizi kullanıcı deneyimi programına katılmaya davet ediyoruz. Kullanım verilerinizi toplayacağız, bu veriler yalnızca analiz için kullanılacak ve sizinle ilgili herhangi bir kişisel bilgi içermeyecek veya çıkarım yapılamayacaktır. Katılmazsanız yalnızca gerekli veriler gönderilecektir. Bu seçim temel işlevleri etkilemeyecektir.</value>
     </data>
     <data name="ChatWindowSettings_ShowChatStatistics_Header" xml:space="preserve">
         <value>Sohbet İstatistiklerini Göster</value>
@@ -982,7 +960,8 @@
         <value>Asistanın açıklamasını belirtin; yalnızca görüntüleme ve ayırt etme amacıyla kullanılır.</value>
     </data>
     <data name="CustomAssistant_SystemPrompt_Description" xml:space="preserve">
-        <value>Sistem istemi, sohbetin başında varsayılan olarak modele gönderilir. İyi hazırlanmış bir istem, bir giriş, görev açıklaması ve bağlamsal bilgileri içerir. İstem içinde {} ile çevrelenmiş yer tutucular kullanılabilir ve modeli göndermeden önce ilgili içeriğe değiştirilecektir.</value>
+        <value>Sistem istemi, sohbetin başında modele gönderilir ve her mesaj gönderildiğinde güncel tutulur.
+İstemde { } içinde yer alan yer tutucular kullanılabilir, modele gönderilmeden önce ilgili içerikle değiştirilir.</value>
     </data>
     <data name="CustomAssistant_SystemPrompt_Header" xml:space="preserve">
         <value>Sistem İstemi</value>
@@ -1003,16 +982,16 @@
         <value>Hayır</value>
     </data>
     <data name="CustomAssistant_ModelProviderTemplate_Header" xml:space="preserve">
-        <value>Model Sağlayıcı Şablonu</value>
+        <value>Model Sağlayıcı</value>
     </data>
     <data name="CustomAssistant_ModelDefinitionTemplate_Header" xml:space="preserve">
-        <value>Model Tanımlama Şablonu</value>
+        <value>Model Adı</value>
     </data>
     <data name="CustomAssistant_ModelDefinitionTemplate_Description" xml:space="preserve">
-        <value>Seçenekleri otomatik olarak doldurmak için bir şablon seçin, örneğin “Model Kimliği, Görüntü Girişi Desteği, Araç Kullanımı Desteği.” Bu ayarları gerektiği gibi değiştirebilirsiniz.</value>
+        <value>Ön ayarlı bir model adı seçin.</value>
     </data>
     <data name="CustomAssistant_ModelProviderTemplate_Description" xml:space="preserve">
-        <value>Seçenekleri otomatik olarak doldurmak için bir şablon seçin, örneğin “API Adresi ve API Şeması.” Bu ayarları gerektiği gibi değiştirebilirsiniz.</value>
+        <value>Ön ayarlı bir model sağlayıcı seçin.</value>
     </data>
     <data name="HandledSystemException_IOException" xml:space="preserve">
         <value>A genel G/Ç hatası oluştu. Bu, dosya okuma veya yazma sorunu nedeniyle olabilir.</value>
@@ -1272,14 +1251,11 @@
     <data name="Windows_BuiltInChatPlugin_PowerShell_ExecuteScript_ScriptConsent_Header" xml:space="preserve">
         <value>Aşağıdaki PowerShell betiği çalıştırılacak</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureVisualElementById_Header" xml:space="preserve">
+    <data name="BuiltInChatPlugin_VisualContext_CaptureVisualElementById_Header" xml:space="preserve">
         <value>UI Öğesini Yakala</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureFullScreen_Header" xml:space="preserve">
-        <value>Tam Ekranı Yakala</value>
-    </data>
-    <data name="BuiltInChatPlugin_VisualTree_ExecuteVisualActionQueue_Header" xml:space="preserve">
-        <value>UI Öğelerini Operasyonla</value>
+    <data name="BuiltInChatPlugin_VisualContext_ExecuteVisualActions_Header" xml:space="preserve">
+        <value>Otomatik İşlemler</value>
     </data>
     <data name="Windows_BuiltInChatPlugin_Everything_SearchFiles_Header" xml:space="preserve">
         <value>Everything ile Dosya Ara</value>
@@ -1290,13 +1266,13 @@
     <data name="ChatWindowViewModel_AddFile_FilePickerFileType_Documents" xml:space="preserve">
         <value>Belge</value>
     </data>
-    <data name="ChatWindowViewModel_AddFile_FilePickerFileType_SupportedFiles" xml:space="preserve">
+    <data name="FilePickerFileType_SupportedFiles" xml:space="preserve">
         <value>Desteklenen Dosyalar</value>
     </data>
     <data name="ChatWindowViewModel_AddFile_FilePickerFileType_Images" xml:space="preserve">
         <value>Görseller</value>
     </data>
-    <data name="ChatWindowViewModel_FilePickerFileType_AllFiles" xml:space="preserve">
+    <data name="FilePickerFileType_AllFiles" xml:space="preserve">
         <value>Tüm Dosyalar</value>
     </data>
     <data name="ChatContext_Metadata_Topic_Header" xml:space="preserve">
@@ -1401,17 +1377,11 @@
     <data name="BuiltInChatPlugin_FileSystem_EnsureFileSystemInfo_PathNotExist_ErrorMessage" xml:space="preserve">
         <value>Belirtilen yol mevcut değildir.</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureVisualElementById_Description" xml:space="preserve">
+    <data name="BuiltInChatPlugin_VisualContext_CaptureVisualElementById_Description" xml:space="preserve">
         <value>Bir görsel öğenin ekran görüntüsünü alın.</value>
     </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureFullScreen_Description" xml:space="preserve">
-        <value>Tüm ekranın ekran görüntüsünü alın.</value>
-    </data>
-    <data name="BuiltInChatPlugin_VisualTree_ExecuteVisualActionQueue_Description" xml:space="preserve">
-        <value>Tıklama, yazma veya kısayollar gönderme gibi bir dizi UI otomasyon eylemini gerçekleştirin.</value>
-    </data>
-    <data name="BuiltInChatPlugin_VisualTree_CaptureFullScreen_NoScreenAvailable_ErrorMessage" xml:space="preserve">
-        <value>Alınacak bir ekran mevcut değil.</value>
+    <data name="BuiltInChatPlugin_VisualContext_ExecuteVisualActions_Description" xml:space="preserve">
+        <value>Tıklama, yazma veya kısayol gönderme gibi bir dizi otomatik işlem gerçekleştirin.</value>
     </data>
     <data name="BuiltInChatPlugin_WebBrowser_WebSearch_Description" xml:space="preserve">
         <value>Bir web araması yapın.</value>
@@ -1440,26 +1410,26 @@
     <data name="BuiltInChatPlugin_WebBrowser_PuppeteerBrowserLaunchError_ErrorMessage" xml:space="preserve">
         <value>Puppeteer tarayıcısını başlatma başarısız oldu.</value>
     </data>
-    <data name="ElementPickerToolTip_TipTextBlock_Text" xml:space="preserve">
+    <data name="ScreenSelectionToolTip_TipText_Normal" xml:space="preserve">
         <value>Seçmek için sol tıklayın, iptal etmek için sağ tıklayın veya Esc tuşuna basın
 Seçim modlarını değiştirmek için kaydırma tekerleğini veya sayı tuşlarını kullanın</value>
     </data>
-    <data name="ElementPickerToolTip_ScreenPickModeBadge_Content" xml:space="preserve">
+    <data name="ScreenSelectionMode_Screen" xml:space="preserve">
         <value>Ekran</value>
     </data>
-    <data name="ElementPickerToolTip_WindowPickModeBadge_Content" xml:space="preserve">
+    <data name="ScreenSelectionMode_Window" xml:space="preserve">
         <value>Pencere</value>
     </data>
-    <data name="ElementPickerToolTip_ElementPickModeBadge_Content" xml:space="preserve">
+    <data name="ScreenSelectionMode_Element" xml:space="preserve">
         <value>Eleman</value>
     </data>
-    <data name="ElementPickerToolTip_GetElementDescription_NoElement" xml:space="preserve">
+    <data name="ScreenSelectionToolTip_GetElementDescription_NoElement" xml:space="preserve">
         <value>Yok</value>
     </data>
     <data name="Common_None" xml:space="preserve">
         <value>Yok</value>
     </data>
-    <data name="ModelProviderSchema_OpenAI_ChatCompletions" xml:space="preserve">
+    <data name="ModelProviderSchema_OpenAI" xml:space="preserve">
         <value>OpenAI (Chat Completions)</value>
     </data>
     <data name="ModelProviderSchema_Anthropic" xml:space="preserve">
@@ -1612,7 +1582,7 @@ Seçim modlarını değiştirmek için kaydırma tekerleğini veya sayı tuşlar
     <data name="ChatPluginPageViewModel_RemoveMcpPlugin_ConfirmationMessage" xml:space="preserve">
         <value>“{0}” kaldırmak istediğinizden emin misiniz?</value>
     </data>
-    <data name="ChatPluginPage_AddMCPPluginButton_Content" xml:space="preserve">
+    <data name="ChatPluginPage_AddMcpPluginButton_Content" xml:space="preserve">
         <value>Ekle</value>
     </data>
     <data name="ChatPluginPage_CopyLogsButton_ToolTip" xml:space="preserve">
@@ -1690,7 +1660,7 @@ Seçim modlarını değiştirmek için kaydırma tekerleğini veya sayı tuşlar
     <data name="DebugFeaturesControl_CreateDumpToast_Content" xml:space="preserve">
         <value>Döküm oluşturulurken lütfen bekleyin. Bu süre zarfında Everywhere yanıt vermeyecek.</value>
     </data>
-    <data name="ModelProviderSchema_OpenAI_Responses" xml:space="preserve">
+    <data name="ModelProviderSchema_OpenAIResponses" xml:space="preserve">
         <value>OpenAI (Responses API)</value>
     </data>
     <data name="MacOS_PermissionHelper_PleaseGrantAccessibilityPermission" xml:space="preserve">
@@ -1893,5 +1863,210 @@ Seçim modlarını değiştirmek için kaydırma tekerleğini veya sayı tuşlar
     </data>
     <data name="CustomAssistant_ConfiguratorSelector_Header" xml:space="preserve">
         <value>AI sağlayıcısını yapılandır</value>
+    </data>
+    <data name="ApiKeyComboBox_AddApiKey" xml:space="preserve">
+        <value>API anahtarı ekle</value>
+    </data>
+    <data name="ApiKeyComboBox_ManageApiKey" xml:space="preserve">
+        <value>API Anahtarını Yönet</value>
+    </data>
+    <data name="ManageApiKeyForm_DeleteApiKeys_Dialog_Message" xml:space="preserve">
+        <value>{0} adet API anahtarını silmek istediğinize emin misiniz? Bu işlem geri alınamaz!</value>
+    </data>
+    <data name="Common_Copied" xml:space="preserve">
+        <value>Kopyalandı</value>
+    </data>
+    <data name="ManageApiKeyForm_DeleteApiKey_Flyout_Content" xml:space="preserve">
+        <value>Silmek istediğinize emin misiniz? Bu işlem geri alınamaz!</value>
+    </data>
+    <data name="ManageApiKeyForm_SecretKeyDataGridTemplateColumn_Header" xml:space="preserve">
+        <value>Anahtar</value>
+    </data>
+    <data name="ManageApiKeyForm_NameDataGridTextColumn_Header" xml:space="preserve">
+        <value>İsim</value>
+    </data>
+    <data name="CustomAssistantInformationForm_IconButton_ToolTip" xml:space="preserve">
+        <value>İkonu değiştirmek için tıklayın</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_AdvancedConfiguratorModel_Header" xml:space="preserve">
+        <value>Gelişmiş Mod</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_AdvancedConfiguratorModel_Description" xml:space="preserve">
+        <value>Tüm model parametrelerini serbestçe yapılandırın, üçüncü taraf modellerle uyumlu</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_PresetBasedConfiguratorModel_Header" xml:space="preserve">
+        <value>Ön Ayar Modu</value>
+    </data>
+    <data name="ModelProviderConfiguratorSelector_PresetBasedConfiguratorModel_Description" xml:space="preserve">
+        <value>Ön ayarlardan yaygın modelleri seçin ve hızlıca başlayın</value>
+    </data>
+    <data name="CreateApiKeyForm_NameTextBox_Label" xml:space="preserve">
+        <value>İsim (sadece görüntüleme ve ayırt etme için)</value>
+    </data>
+    <data name="CreateApiKeyForm_SecretKeyTextBox_Label" xml:space="preserve">
+        <value>Anahtar</value>
+    </data>
+    <data name="ManageApiKeyForm_AddApiKeyButton_Content" xml:space="preserve">
+        <value>Ekle</value>
+    </data>
+    <data name="ManageApiKeyForm_DeleteApiKeysButton_Content" xml:space="preserve">
+        <value>Seçilenleri Sil</value>
+    </data>
+    <data name="WelcomeView_ModelProviderHyperlinkButton_Content" xml:space="preserve">
+        <value>Beni tıklayın</value>
+    </data>
+    <data name="WelcomeView_AssistantStep_Advanced_Message1" xml:space="preserve">
+        <value>Gelişmiş moda hoş geldiniz. API protokolü destekleyen üçüncü taraf modelleri kendiniz yapılandırabilirsiniz.</value>
+    </data>
+    <data name="WelcomeView_AssistantStep_Advanced_Message2" xml:space="preserve">
+        <value>Lütfen dikkat edin, tüm üçüncü taraf modellerle mükemmel uyum garantisi veremem.</value>
+    </data>
+    <data name="AdvancedModelProviderConfigurator_InvalidEndpoint" xml:space="preserve">
+        <value>http:// veya https:// ile başlayan geçerli bir URL olmalıdır</value>
+    </data>
+    <data name="VisualElementType_Spinner" xml:space="preserve">
+        <value>Açılır Liste</value>
+    </data>
+    <data name="VisualElementType_Splitter" xml:space="preserve">
+        <value>Bölücü</value>
+    </data>
+    <data name="VisualElementType_StatusBar" xml:space="preserve">
+        <value>Durum Çubuğu</value>
+    </data>
+    <data name="VisualElementType_ToolBar" xml:space="preserve">
+        <value>Araç Çubuğu</value>
+    </data>
+    <data name="VisualElementType_Header" xml:space="preserve">
+        <value>Başlık</value>
+    </data>
+    <data name="VisualElementType_HeaderItem" xml:space="preserve">
+        <value>Başlık Öğesi</value>
+    </data>
+    <data name="ApiKey_EmptyName" xml:space="preserve">
+        <value>(boş)</value>
+    </data>
+    <data name="ChatWindowSettings_AlwaysStartNewChat_Header" xml:space="preserve">
+        <value>Her zaman yeni sohbet başlat</value>
+    </data>
+    <data name="ChatWindowSettings_AlwaysStartNewChat_Description" xml:space="preserve">
+        <value>Kısayol ile uygulamayı çağırdığınızda, önceki konuşmayı atlayarak yeni bir oturum başlatın.</value>
+    </data>
+    <data name="ChatPluginPage_ImportMcpPluginButton_ToolTip" xml:space="preserve">
+        <value>JSON'dan içe aktar</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_DialogTitle" xml:space="preserve">
+        <value>MCP Eklentisini İçe Aktar</value>
+    </data>
+    <data name="McpImportForm_Description" xml:space="preserve">
+        <value>Aşağıya MCP yapılandırma JSON'unuzu yapıştırın veya yerel bir dosyadan içe aktarın.</value>
+    </data>
+    <data name="McpImportForm_OpenButton_Content" xml:space="preserve">
+        <value>Aç</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_SuccessToast_Title" xml:space="preserve">
+        <value>{0} MCP eklentisi içe aktarıldı</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_FailedToast_Title" xml:space="preserve">
+        <value>MCP Eklentileri içe aktarılamadı</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_NotFoundToast_Title" xml:space="preserve">
+        <value>Geçerli MCP eklentisi bulunamadı</value>
+    </data>
+    <data name="McpTransportConfiguration_DefaultName" xml:space="preserve">
+        <value>MCP Sunucusu</value>
+    </data>
+    <data name="ChatPluginPageViewModel_ImportMcpPlugin_PartialSuccessToast_Title" xml:space="preserve">
+        <value>{0} eklenti başarıyla içe aktarıldı, {1} başarısız oldu</value>
+    </data>
+    <data name="Application_TrayIcon_Menu_OpenChatWindow" xml:space="preserve">
+        <value>Sohbet Penceresini Aç</value>
+    </data>
+    <data name="Linux_NativeHelper_RestartAsAdministrator_DesktopNotification" xml:space="preserve">
+        <value>Linux sistemlerinde genellikle yalnızca kullanıcı izinleri kullanılır. Yönetici izinlerine ihtiyaç duyulursa, lütfen uygulamayı sudo ile yeniden başlatın.</value>
+    </data>
+    <data name="Linux_ShortcutListener_Register_FailedToGrabHotkey" xml:space="preserve">
+        <value>Kısayol tuşunu kaydetmek mümkün olmadı. Bu kombinasyon tuşu zaten kullanılıyor olabilir.</value>
+    </data>
+    <data name="ScreenSelectionMode_Free" xml:space="preserve">
+        <value>Serbest</value>
+    </data>
+    <data name="ScreenSelectionToolTip_TipText_Free" xml:space="preserve">
+        <value>Sol tuşa basılı tutarak seçim yapın, sağ tuş veya Esc ile çıkın
+Seçim modunu değiştirmek için kaydırıcı veya rakam tuşlarını kullanın</value>
+    </data>
+    <data name="ChatWindow_ChatInputArea_AddAttachmentMenuItems_Screenshot" xml:space="preserve">
+        <value>Ekran görüntüsü</value>
+    </data>
+    <data name="ChatWindowSettings_AutomaticallyAddTextSelection_Header" xml:space="preserve">
+        <value>Metin Seçimini Otomatik Ekle</value>
+    </data>
+    <data name="ChatWindowSettings_AutomaticallyAddTextSelection_Description" xml:space="preserve">
+        <value>Etkinleştirildiğinde, seçili metin otomatik olarak ek olarak eklenir.</value>
+    </data>
+    <data name="BuiltInChatPlugin_VisualContext_ListWindows_Header" xml:space="preserve">
+        <value>Pencereleri Listele</value>
+    </data>
+    <data name="BuiltInChatPlugin_VisualContext_ListWindows_Description" xml:space="preserve">
+        <value>Ekrandaki tüm pencereleri listeleyin.</value>
+    </data>
+    <data name="ExperimentalBadge_Content" xml:space="preserve">
+        <value>Deneysel</value>
+    </data>
+    <data name="ExperimentalBadge_ToolTip" xml:space="preserve">
+        <value>Bu özellik deneysel olup, beklenmedik hatalara ve sonuçlara yol açabilir.</value>
+    </data>
+    <data name="CommonSettings_IsUserStartupEnabled_Header" xml:space="preserve">
+        <value>Başlangıçta Çalıştır</value>
+    </data>
+    <data name="CommonSettings_IsUserStartupEnabled_Description" xml:space="preserve">
+        <value>Everywhere, bilgisayar açıldığında otomatik olarak çalışacaktır.</value>
+    </data>
+    <data name="ModelProviderSchema_DeepSeek" xml:space="preserve">
+        <value>DeepSeek</value>
+    </data>
+    <data name="ChatWindow_ChatInputArea_SettingsMenuItems_MoreSettings" xml:space="preserve">
+        <value>Daha Fazla Ayar</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_Header" xml:space="preserve">
+        <value>fd-find</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_Description" xml:space="preserve">
+        <value>fd-find (yüksek performanslı bir yerel dosya arama aracı) kullanarak bilgisayarınızdaki dosyaları arar. Bu araç kullanılmadan önce fd-find'in yüklenmiş olması gerekir.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_SearchFiles_Header" xml:space="preserve">
+        <value>Dosya ara</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_SearchFiles_Description" xml:space="preserve">
+        <value>Linux'ta fd-find kullanarak dosya veya dizin ara.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_FdFind_SearchFiles_DetailMessage" xml:space="preserve">
+        <value>{0} dosya bulundu</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_Description" xml:space="preserve">
+        <value>Bash betiklerini çalıştırma yeteneği sağlar, sistemle doğrudan etkileşimde bulunmanıza olanak tanır. Ancak, bu aynı zamanda beklenmedik dosya silme veya sistem çökmesine neden olabilecek riskler taşır.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_DenyMessage" xml:space="preserve">
+        <value>Kullanıcı, bash betiğinin çalıştırılması için izni reddetti.</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_ErrorMessage" xml:space="preserve">
+        <value>bash betiği çalıştırma hatası: {0}</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_Header" xml:space="preserve">
+        <value>Betik Çalıştır</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_ExecuteScript_ScriptConsent_Header" xml:space="preserve">
+        <value>Aşağıdaki bash betiği çalıştırılacak</value>
+    </data>
+    <data name="Linux_BuiltInChatPlugin_Bash_Header" xml:space="preserve">
+        <value>Bash Shell</value>
+    </data>
+    <data name="HandledSystemException_Serialization" xml:space="preserve">
+        <value>Veri ayrıştırılırken hata oluştu.</value>
+    </data>
+    <data name="HandledSystemException_FunctionInvoking" xml:space="preserve">
+        <value>Araç çağrılırken hata oluştu.</value>
+    </data>
+    <data name="ChatWindowViewModel_ExportMarkdown_ReasoningOutput" xml:space="preserve">
+        <value>Derin Düşünme</value>
     </data>
 </root>
